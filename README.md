@@ -15,6 +15,22 @@ Puree helps you unify your logging infrastructure.
 
 Currently in development so the interface might change.
 
+## Installation
+
+### Carthage
+
+```
+github "cookpad/Puree-Swift"
+```
+
+### CocoaPods
+
+```ruby
+use_frameworks!
+
+pod 'Puree', '~> 3.0'
+```
+
 ## Usage
 
 ### Define your own Filter/Output
@@ -175,20 +191,3 @@ By default, Puree stores them in local files in the `Library/Caches` directory.
 You can also define your own custom log store backed by any storage (e.g. Core Data, Realm, YapDatabase, etc.).
 
 See the `LogStore` protocol for more details.
-
-## Installation
-
-### Carthage
-
-```
-github "cookpad/Puree-Swift"
-```
-
-### CocoaPods
-
-```ruby
-use_frameworks!
-
-pod 'Puree-Swift'
-```
-
