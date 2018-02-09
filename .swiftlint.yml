@@ -1,0 +1,5 @@
+included: 
+  - Sources
+  - Tests/PureeTests
+disabled_rules:
+  - line_length
