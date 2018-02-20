@@ -18,9 +18,9 @@
 		BF_429021003566 /* LogStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_818352195712 /* LogStore.swift */; };
 		BF_468687204183 /* LogEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_912035359082 /* LogEntry.swift */; };
 		BF_485048067586 /* BufferedOutputTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_630835297098 /* BufferedOutputTests.swift */; };
-		BF_595409884047 /* TagMatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_870064055253 /* TagMatcherTests.swift */; };
+		BF_595409884047 /* TagPatternTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_870064055253 /* TagPatternTests.swift */; };
 		BF_625371294693 /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_775709644702 /* Logger.swift */; };
-		BF_647931598633 /* LogTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_167045655688 /* LogTests.swift */; };
+		BF_647931598633 /* LogEntryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_167045655688 /* LogEntryTests.swift */; };
 		BF_859683188258 /* LoggerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_657386344080 /* LoggerTests.swift */; };
 		BF_884702636068 /* DateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_828954093903 /* DateProvider.swift */; };
 		BF_894429986524 /* TagPattern.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_644801390644 /* TagPattern.swift */; };
@@ -39,7 +39,7 @@
 
 /* Begin PBXFileReference section */
 		FR_135157311129 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		FR_167045655688 /* LogTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogTests.swift; sourceTree = "<group>"; };
+		FR_167045655688 /* LogEntryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogEntryTests.swift; sourceTree = "<group>"; };
 		FR_176166977065 /* Filter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		FR_254889461063 /* BufferedOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferedOutput.swift; sourceTree = "<group>"; };
 		FR_272688927660 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -57,7 +57,7 @@
 		FR_828954093903 /* DateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateProvider.swift; sourceTree = "<group>"; };
 		FR_848196260343 /* Output.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Output.swift; sourceTree = "<group>"; };
 		FR_869531157922 /* TestingBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestingBuffer.swift; sourceTree = "<group>"; };
-		FR_870064055253 /* TagMatcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagMatcherTests.swift; sourceTree = "<group>"; };
+		FR_870064055253 /* TagPatternTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagPatternTests.swift; sourceTree = "<group>"; };
 		FR_912035359082 /* LogEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogEntry.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -85,13 +85,13 @@
 		G_2671118715628 /* PureeTests */ = {
 			isa = PBXGroup;
 			children = (
-				G_7185892225853 /* LogStore */,
-				G_6662760494323 /* Utilities */,
 				FR_630835297098 /* BufferedOutputTests.swift */,
 				FR_135157311129 /* Info.plist */,
-				FR_167045655688 /* LogTests.swift */,
+				FR_167045655688 /* LogEntryTests.swift */,
 				FR_657386344080 /* LoggerTests.swift */,
-				FR_870064055253 /* TagMatcherTests.swift */,
+				G_7185892225853 /* LogStore */,
+				FR_870064055253 /* TagPatternTests.swift */,
+				G_6662760494323 /* Utilities */,
 			);
 			name = PureeTests;
 			path = Tests/PureeTests;
@@ -238,9 +238,9 @@
 				BF_485048067586 /* BufferedOutputTests.swift in Sources */,
 				BF_364947189323 /* FileLogStoreTests.swift in Sources */,
 				BF_104851505209 /* InMemoryLogStore.swift in Sources */,
-				BF_647931598633 /* LogTests.swift in Sources */,
+				BF_647931598633 /* LogEntryTests.swift in Sources */,
 				BF_859683188258 /* LoggerTests.swift in Sources */,
-				BF_595409884047 /* TagMatcherTests.swift in Sources */,
+				BF_595409884047 /* TagPatternTests.swift in Sources */,
 				BF_198816004411 /* TestingBuffer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

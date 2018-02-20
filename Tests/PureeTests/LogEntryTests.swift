@@ -2,7 +2,7 @@ import Foundation
 import XCTest
 import Puree
 
-class LogTests: XCTestCase {
+class LogEntryTests: XCTestCase {
     private func decode<T: Decodable>(_ data: Data) -> T {
         return try! JSONDecoder().decode(T.self, from: data)
     }
