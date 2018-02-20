@@ -4,12 +4,12 @@ public final class Logger {
     public struct Configuration {
         public var logStore: LogStore
         public var dateProvider: DateProvider = DefaultDateProvider()
-        public var filterSettings: [FilterSetting] = []
+        public var filterSettings: [FilterSettingProtocol] = []
         public var outputSettings: [OutputSetting] = []
 
         public init(logStore: LogStore = FileLogStore.default,
                     dateProvider: DateProvider = DefaultDateProvider(),
-                    filterSettings: [FilterSetting],
+                    filterSettings: [FilterSettingProtocol],
                     outputSettings: [OutputSetting]) {
             self.logStore = logStore
             self.dateProvider = dateProvider
