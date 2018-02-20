@@ -7,7 +7,7 @@ public final class Logger {
         public var filterSettings: [FilterSetting] = []
         public var outputSettings: [OutputSetting] = []
 
-        public init(logStore: LogStore,
+        public init(logStore: LogStore = FileLogStore.default,
                     dateProvider: DateProvider = DefaultDateProvider(),
                     filterSettings: [FilterSetting],
                     outputSettings: [OutputSetting]) {
