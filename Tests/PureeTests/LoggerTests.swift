@@ -86,14 +86,26 @@ class LoggerTests: XCTestCase {
 
     func testLoggerWithCustomSetting() {
         struct CustomFilterSetting: FilterSettingProtocol {
+            private let tableName: String
+
+            init(tableName: String) {
+                self.tableName = tableName
+            }
+
             func makeFilter() throws -> Filter {
-                return PVLogFilter(tagPattern: TagPattern(string: "pv2")!, options: [:])
+                return PVLogFilter(tagPattern: TagPattern(string: "pv2")!, options: ["table_name": tableName])
             }
         }
 
         struct CustomOutputSetting: OutputSettingProtocol {
+            private let tableName: String
+
+            init(tableName: String) {
+                self.tableName = tableName
+            }
+
             func makeOutput(_ logStore: LogStore) throws -> Output {
-                return PVLogOutput(logStore: logStore, tagPattern: TagPattern(string: "pv2")!, options: [:])
+                return PVLogOutput(logStore: logStore, tagPattern: TagPattern(string: "pv2")!, options: ["table_name": tableName])
             }
         }
 
@@ -101,12 +113,12 @@ class LoggerTests: XCTestCase {
                                                  dateProvider: DefaultDateProvider(),
                                                  filterSettings: [
                                                     FilterSetting(PVLogFilter.self, tagPattern: TagPattern(string: "pv")!),
-                                                    CustomFilterSetting(),
+                                                    CustomFilterSetting(tableName: "pv_log"),
                                                     FilterSetting(PVLogFilter.self, tagPattern: TagPattern(string: "pv.*")!)
             ],
                                                  outputSettings: [
                                                     OutputSetting(PVLogOutput.self, tagPattern: TagPattern(string: "pv")!),
-                                                    CustomOutputSetting(),
+                                                    CustomOutputSetting(tableName: "pv_log"),
                                                     OutputSetting(PVLogOutput.self, tagPattern: TagPattern(string: "pv.*")!)
             ])
         let logger = try! Logger(configuration: configuration)
