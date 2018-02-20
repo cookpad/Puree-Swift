@@ -14,10 +14,10 @@ public struct FilterSetting: FilterSettingProtocol {
     }
 
     public func makeFilter() throws -> Filter {
-        return try makeFilterBlock()
+        return makeFilterBlock()
     }
 
-    private let makeFilterBlock: () throws -> Filter
+    private let makeFilterBlock: () -> Filter
 }
 
 public protocol Filter {

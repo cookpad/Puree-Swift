@@ -13,11 +13,11 @@ public struct OutputSetting: OutputSettingProtocol {
         }
     }
 
-    public func makeOutput(_ logStore: LogStore) throws -> Output {
-        return try makeOutputBlock(logStore)
+    public func makeOutput(_ logStore: LogStore) -> Output {
+        return makeOutputBlock(logStore)
     }
 
-    private let makeOutputBlock: (_ logStore: LogStore) throws -> Output
+    private let makeOutputBlock: (_ logStore: LogStore) -> Output
 }
 
 public protocol Output {
