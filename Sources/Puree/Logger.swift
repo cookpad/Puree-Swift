@@ -5,12 +5,12 @@ public final class Logger {
         public var logStore: LogStore
         public var dateProvider: DateProvider = DefaultDateProvider()
         public var filterSettings: [FilterSettingProtocol] = []
-        public var outputSettings: [OutputSetting] = []
+        public var outputSettings: [OutputSettingProtocol] = []
 
         public init(logStore: LogStore = FileLogStore.default,
                     dateProvider: DateProvider = DefaultDateProvider(),
                     filterSettings: [FilterSettingProtocol],
-                    outputSettings: [OutputSetting]) {
+                    outputSettings: [OutputSettingProtocol]) {
             self.logStore = logStore
             self.dateProvider = dateProvider
             self.filterSettings = filterSettings

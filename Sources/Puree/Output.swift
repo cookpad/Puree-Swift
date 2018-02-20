@@ -2,13 +2,18 @@ import Foundation
 
 public typealias OutputOptions = [String: Any]
 
-public struct OutputSetting {
+public protocol OutputSettingProtocol {
+    init<O: Output>(_ output: O.Type, tagPattern: TagPattern, options: OutputOptions?)
+    var makeOutput: (_ logStore: LogStore) throws -> Output { get }
+}
+
+public struct OutputSetting: OutputSettingProtocol {
     public init<O: Output>(_ output: O.Type, tagPattern: TagPattern, options: OutputOptions? = nil) {
         makeOutput = { logStore in
             return O(logStore: logStore, tagPattern: tagPattern, options: options)
         }
     }
-    private(set) var makeOutput: (_ logStore: LogStore) throws -> Output
+    public let makeOutput: (_ logStore: LogStore) throws -> Output
 }
 
 public protocol Output {
