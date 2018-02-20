@@ -84,6 +84,41 @@ class LoggerTests: XCTestCase {
         XCTAssertEqual(buffer.logs(for: "pv.*").count, 1)
     }
 
+    func testLoggerWithCustomSetting() {
+        struct CustomFilterSetting: FilterSettingProtocol {
+            func makeFilter() throws -> Filter {
+                return PVLogFilter(tagPattern: TagPattern(string: "pv2")!, options: [:])
+            }
+        }
+
+        struct CustomOutputSetting: OutputSettingProtocol {
+            func makeOutput(_ logStore: LogStore) throws -> Output {
+                return PVLogOutput(logStore: logStore, tagPattern: TagPattern(string: "pv2")!, options: [:])
+            }
+        }
+
+        let configuration = Logger.Configuration(logStore: logStore,
+                                                 dateProvider: DefaultDateProvider(),
+                                                 filterSettings: [
+                                                    FilterSetting(PVLogFilter.self, tagPattern: TagPattern(string: "pv")!),
+                                                    CustomFilterSetting(),
+                                                    FilterSetting(PVLogFilter.self, tagPattern: TagPattern(string: "pv.*")!)
+            ],
+                                                 outputSettings: [
+                                                    OutputSetting(PVLogOutput.self, tagPattern: TagPattern(string: "pv")!),
+                                                    CustomOutputSetting(),
+                                                    OutputSetting(PVLogOutput.self, tagPattern: TagPattern(string: "pv.*")!)
+            ])
+        let logger = try! Logger(configuration: configuration)
+        logger.postLog(["page_name": "Top", "user_id": 100], tag: "pv.top")
+        logger.postLog(["page_name": "Top", "user_id": 100], tag: "pv2")
+        logger.postLog(["page_name": "Top", "user_id": 100], tag: "pv2")
+
+        XCTAssertEqual(buffer.logs(for: "pv").count, 0)
+        XCTAssertEqual(buffer.logs(for: "pv2").count, 2)
+        XCTAssertEqual(buffer.logs(for: "pv.*").count, 1)
+    }
+
     override func tearDown() {
         super.tearDown()
 
