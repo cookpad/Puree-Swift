@@ -20,7 +20,7 @@ class LogEntryTests: XCTestCase {
             "key1": 20,
             "key2": ["a", "b"],
             "key3": true,
-            "key4": ["spam": "ham"]
+            "key4": ["spam": "ham"],
             ]
         testLog.userData = try! JSONSerialization.data(withJSONObject: userInfo, options: [])
 
