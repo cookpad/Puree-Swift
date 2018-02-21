@@ -5,4 +5,5 @@ before_script:
   - swiftlint
   - pod lib lint
 script:
+- swift test
 - xcodebuild test -project Puree.xcodeproj -scheme PureeTests -destination 'platform=iOS Simulator,name=iPhone 8'

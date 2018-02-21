@@ -43,10 +43,10 @@ class LoggerTests: XCTestCase {
         let configuration = Logger.Configuration(logStore: logStore,
                                                  dateProvider: DefaultDateProvider(),
                                                  filterSettings: [
-                                                    FilterSetting(PVLogFilter.self, tagPattern: TagPattern(string: "pv")!)
+                                                    FilterSetting(PVLogFilter.self, tagPattern: TagPattern(string: "pv")!),
             ],
                                                  outputSettings: [
-                                                    OutputSetting(PVLogOutput.self, tagPattern: TagPattern(string: "pv")!)
+                                                    OutputSetting(PVLogOutput.self, tagPattern: TagPattern(string: "pv")!),
             ])
         let logger = try! Logger(configuration: configuration)
         logger.postLog(["page_name": "Top", "user_id": 100], tag: "pv")
@@ -67,12 +67,59 @@ class LoggerTests: XCTestCase {
                                                  filterSettings: [
                                                     FilterSetting(PVLogFilter.self, tagPattern: TagPattern(string: "pv")!),
                                                     FilterSetting(PVLogFilter.self, tagPattern: TagPattern(string: "pv2")!),
-                                                    FilterSetting(PVLogFilter.self, tagPattern: TagPattern(string: "pv.*")!)
+                                                    FilterSetting(PVLogFilter.self, tagPattern: TagPattern(string: "pv.*")!),
             ],
                                                  outputSettings: [
                                                     OutputSetting(PVLogOutput.self, tagPattern: TagPattern(string: "pv")!),
                                                     OutputSetting(PVLogOutput.self, tagPattern: TagPattern(string: "pv2")!),
-                                                    OutputSetting(PVLogOutput.self, tagPattern: TagPattern(string: "pv.*")!)
+                                                    OutputSetting(PVLogOutput.self, tagPattern: TagPattern(string: "pv.*")!),
+            ])
+        let logger = try! Logger(configuration: configuration)
+        logger.postLog(["page_name": "Top", "user_id": 100], tag: "pv.top")
+        logger.postLog(["page_name": "Top", "user_id": 100], tag: "pv2")
+        logger.postLog(["page_name": "Top", "user_id": 100], tag: "pv2")
+
+        XCTAssertEqual(buffer.logs(for: "pv").count, 0)
+        XCTAssertEqual(buffer.logs(for: "pv2").count, 2)
+        XCTAssertEqual(buffer.logs(for: "pv.*").count, 1)
+    }
+
+    func testLoggerWithCustomSetting() {
+        struct CustomFilterSetting: FilterSettingProtocol {
+            private let tableName: String
+
+            init(tableName: String) {
+                self.tableName = tableName
+            }
+
+            func makeFilter() throws -> Filter {
+                return PVLogFilter(tagPattern: TagPattern(string: "pv2")!, options: ["table_name": tableName])
+            }
+        }
+
+        struct CustomOutputSetting: OutputSettingProtocol {
+            private let tableName: String
+
+            init(tableName: String) {
+                self.tableName = tableName
+            }
+
+            func makeOutput(_ logStore: LogStore) throws -> Output {
+                return PVLogOutput(logStore: logStore, tagPattern: TagPattern(string: "pv2")!, options: ["table_name": tableName])
+            }
+        }
+
+        let configuration = Logger.Configuration(logStore: logStore,
+                                                 dateProvider: DefaultDateProvider(),
+                                                 filterSettings: [
+                                                    FilterSetting(PVLogFilter.self, tagPattern: TagPattern(string: "pv")!),
+                                                    CustomFilterSetting(tableName: "pv_log"),
+                                                    FilterSetting(PVLogFilter.self, tagPattern: TagPattern(string: "pv.*")!),
+            ],
+                                                 outputSettings: [
+                                                    OutputSetting(PVLogOutput.self, tagPattern: TagPattern(string: "pv")!),
+                                                    CustomOutputSetting(tableName: "pv_log"),
+                                                    OutputSetting(PVLogOutput.self, tagPattern: TagPattern(string: "pv.*")!),
             ])
         let logger = try! Logger(configuration: configuration)
         logger.postLog(["page_name": "Top", "user_id": 100], tag: "pv.top")

@@ -125,8 +125,7 @@ After implementing filters and outputs, you can configure the routing with `Logg
 ```swift
 import Puree
 
-let configuration = Logger.Configuration(logStore: FileLogStore.default,
-                                         filterSettings: [
+let configuration = Logger.Configuration(filterSettings: [
                                              FilterSetting(PVLogFilter.self,
                                                            tagPattern: TagPattern(string: "pv.**")!),
                                          ],

@@ -2,13 +2,22 @@ import Foundation
 
 public typealias FilterOptions = [String: Any]
 
-public struct FilterSetting {
+public protocol FilterSettingProtocol {
+    func makeFilter() throws -> Filter
+}
+
+public struct FilterSetting: FilterSettingProtocol {
     public init<F: Filter>(_ filter: F.Type, tagPattern: TagPattern, options: FilterOptions? = nil) {
-        makeFilter = {
+        makeFilterBlock = {
             return F(tagPattern: tagPattern, options: options)
         }
     }
-    private(set) var makeFilter: () throws -> Filter
+
+    public func makeFilter() throws -> Filter {
+        return makeFilterBlock()
+    }
+
+    private let makeFilterBlock: () -> Filter
 }
 
 public protocol Filter {

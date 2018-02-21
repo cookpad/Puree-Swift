@@ -2,7 +2,7 @@ import Foundation
 import XCTest
 @testable import Puree
 
-class TagMatcherTests: XCTestCase {
+class TagPatternTests: XCTestCase {
     func assertMatched(_ match: TagPattern.Match?, capturedString expectedCapturedString: String?) {
         if let match = match {
             if match.captured != expectedCapturedString {

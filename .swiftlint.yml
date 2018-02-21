@@ -3,3 +3,5 @@ included:
   - Tests/PureeTests
 disabled_rules:
   - line_length
+trailing_comma:
+  mandatory_comma: true

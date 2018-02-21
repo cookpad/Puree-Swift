@@ -2,7 +2,7 @@ import Foundation
 import XCTest
 import Puree
 
-class LogTests: XCTestCase {
+class LogEntryTests: XCTestCase {
     private func decode<T: Decodable>(_ data: Data) -> T {
         return try! JSONDecoder().decode(T.self, from: data)
     }
@@ -20,7 +20,7 @@ class LogTests: XCTestCase {
             "key1": 20,
             "key2": ["a", "b"],
             "key3": true,
-            "key4": ["spam": "ham"]
+            "key4": ["spam": "ham"],
             ]
         testLog.userData = try! JSONSerialization.data(withJSONObject: userInfo, options: [])
 
