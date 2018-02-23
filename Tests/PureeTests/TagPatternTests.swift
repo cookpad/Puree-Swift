@@ -44,5 +44,8 @@ class TagPatternTests: XCTestCase {
         XCTAssertNil(TagPattern(string: "a.**.**"))
         XCTAssertNil(TagPattern(string: "a..b.c"))
         XCTAssertNil(TagPattern(string: ""))
+        XCTAssertNil(TagPattern(string: "a. .c"))
+        XCTAssertNil(TagPattern(string: "a.\n.c"))
+        XCTAssertNil(TagPattern(string: "a.b.\n "))
     }
 }
