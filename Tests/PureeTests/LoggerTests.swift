@@ -9,7 +9,7 @@ struct PVLogFilter: Filter {
         self.tagPattern = tagPattern
     }
 
-    var tagPattern: TagPattern = TagPattern(string: "")!
+    let tagPattern: TagPattern
 
     func convertToLogs(_ payload: [String: Any]?, tag: String, captured: String?, logger: Logger) -> Set<LogEntry> {
         var log = LogEntry(tag: tag, date: logger.currentDate)
