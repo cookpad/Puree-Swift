@@ -4,7 +4,9 @@ language: objective-c
 before_script: 
   - swiftlint
   - pod lib lint
+matrix:
+  include:
+    - env: NAME=SPM
+    - env: NAME=Xcode
 script:
-  - swift build
-  - swift test
-  - xcodebuild test -project Puree.xcodeproj -scheme PureeTests -destination 'platform=iOS Simulator,name=iPhone 8'
+  - if [ $NAME = "Xcode" ]; then xcodebuild test -project Puree.xcodeproj -scheme PureeTests -destination 'platform=iOS Simulator,name=iPhone 8'; else swift test; fi
