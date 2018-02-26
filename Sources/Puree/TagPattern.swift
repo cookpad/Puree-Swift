@@ -20,17 +20,10 @@ public struct TagPattern {
     }
 
     private static func isValidPattern(_ pattern: String) -> Bool {
-        enum ValidationError: Error {
-            case invalidElement
-        }
-        
-        let elements = pattern.split(separator: separator, omittingEmptySubsequences: false)
-        
-        let wildcards = try? elements.filter { element in
-            guard !element.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { throw ValidationError.invalidElement }
-            return element == allWildcard || element == wildcard
-        }
-        return wildcards.map { $0.count <= 1 } ?? false
+        let patternElements = pattern.split(separator: separator, omittingEmptySubsequences: false)
+        let isValidWildcardCount = patternElements.filter { $0 == allWildcard || $0 == wildcard }.count <= 1
+        let isContainsInvalidElement = patternElements.contains { $0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+        return isValidWildcardCount && !isContainsInvalidElement
     }
 
     func match(in tag: String) -> Match? {
