@@ -14,7 +14,7 @@ class TestingBufferedOutput: BufferedOutput {
     }
 
     override func delay(try count: Int) -> TimeInterval {
-        return 0.5
+        return 0.2
     }
 }
 
@@ -116,7 +116,7 @@ class BufferedOutputTests: XCTestCase {
         output.writeCallback = {
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 0.5)
+        wait(for: [expectation], timeout: 1.0)
 
         expectation = self.expectation(description: "retry writeChunk")
         XCTAssertEqual(output.calledWriteCount, 2)
@@ -124,7 +124,7 @@ class BufferedOutputTests: XCTestCase {
         output.writeCallback = {
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 0.5)
+        wait(for: [expectation], timeout: 1.0)
 
         expectation = self.expectation(description: "retry writeChunk")
         XCTAssertEqual(output.calledWriteCount, 3)
@@ -132,7 +132,7 @@ class BufferedOutputTests: XCTestCase {
         output.writeCallback = {
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 0.5)
+        wait(for: [expectation], timeout: 1.0)
         XCTAssertEqual(output.calledWriteCount, 4)
     }
 
