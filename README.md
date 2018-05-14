@@ -82,15 +82,15 @@ The following `ConsoleOutput` will output logs to the standard output.
 
 ```swift
 class ConsoleOutput: Output {
-    let tagPattern: String
+    let tagPattern: TagPattern
 
-    init(logStore: LogStore, tagPattern: String, options: OutputOptions?) {
+    required init(logStore: LogStore, tagPattern: TagPattern, options: OutputOptions?) {
         self.tagPattern = tagPattern
     }
 
-    func emit(log: Log) {
+    func emit(log: LogEntry) {
         if let userData = log.userData {
-            let jsonObject = try! JSONSerialization.jsonObject(with: log.userData)
+            let jsonObject = try! JSONSerialization.jsonObject(with: userData)
             print(jsonObject)
         }
     }
