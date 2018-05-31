@@ -56,8 +56,8 @@ public class FileLogStore: LogStore {
 
     public static let `default` = FileLogStore()
 
-    func fileURL(for outputTagPattern: String) -> URL {
-        let fileName = "\(FileLogStore.baseFileName)_\(outputTagPattern)"
+    private func fileURL(for group: String) -> URL {
+        let fileName = "\(FileLogStore.baseFileName)_\(group)"
         return baseDirectoryURL.appendingPathComponent(fileName)
     }
     private var fileManager: FileManagerProtocol = SystemFileManager()

@@ -22,6 +22,7 @@ public struct OutputSetting: OutputSettingProtocol {
 
 public protocol Output {
     var tagPattern: TagPattern { get }
+    var storageGroup: String { get }
 
     func start()
     func resume()
@@ -39,5 +40,10 @@ public extension Output {
     }
 
     func suspend() {
+    }
+
+    var storageGroup: String {
+        let typeName = String(describing: type(of: self))
+        return "\(tagPattern.pattern)_\(typeName)"
     }
 }

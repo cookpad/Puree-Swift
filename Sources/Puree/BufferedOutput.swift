@@ -76,7 +76,7 @@ open class BufferedOutput: Output {
     public func emit(log: LogEntry) {
         buffer.insert(log)
 
-        logStore.add(log, for: tagPattern.pattern, completion: nil)
+        logStore.add(log, for: storageGroup, completion: nil)
 
         if buffer.count >= logLimit {
             flush()
@@ -112,7 +112,7 @@ open class BufferedOutput: Output {
     private func reloadLogStore() {
         buffer.removeAll()
 
-        logStore.retrieveLogs(of: tagPattern.pattern) { logs in
+        logStore.retrieveLogs(of: storageGroup) { logs in
             buffer = buffer.union(logs)
         }
     }
@@ -139,7 +139,7 @@ open class BufferedOutput: Output {
     private func callWriteChunk(_ chunk: Chunk) {
         write(chunk) { success in
             if success {
-                self.logStore.remove(chunk.logs, from: self.tagPattern.pattern, completion: nil)
+                self.logStore.remove(chunk.logs, from: self.storageGroup, completion: nil)
                 return
             }
 
