@@ -1,3 +1,5 @@
 disabled_rules:
   - force_try
   - force_cast
+  - nesting
+  - identifier_name
