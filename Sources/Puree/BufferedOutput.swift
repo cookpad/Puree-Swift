@@ -87,6 +87,11 @@ open class BufferedOutput: Output {
         completion(false)
     }
 
+    open var storageGroup: String {
+        let typeName = String(describing: type(of: self))
+        return "\(tagPattern.pattern)_\(typeName)"
+    }
+
     private func setUpTimer() {
         self.timer?.invalidate()
 

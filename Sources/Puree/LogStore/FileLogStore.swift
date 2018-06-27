@@ -58,7 +58,7 @@ public class FileLogStore: LogStore {
 
     private func fileURL(for group: String) -> URL {
         let fileName = "\(FileLogStore.baseFileName)_\(group)"
-        return baseDirectoryURL.appendingPathComponent(fileName)
+        return baseDirectoryURL.appendingPathComponent(encodeToBase16(fileName))
     }
     private var fileManager: FileManagerProtocol = SystemFileManager()
 
@@ -109,5 +109,9 @@ public class FileLogStore: LogStore {
     public func flush() {
         try? fileManager.removeDirectory(at: baseDirectoryURL)
         try? createCachesDirectory()
+    }
+
+    private func encodeToBase16(_ string: String) -> String {
+        return string.data(using: .utf8)!.map { String(format: "%02hhx", $0) }.joined()
     }
 }
