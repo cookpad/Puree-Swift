@@ -49,7 +49,6 @@ struct SystemFileManager: FileManagerProtocol {
 }
 
 public class FileLogStore: LogStore {
-    private static let baseFileName = "com.cookpad.Puree.FileLogStore"
     private static let directoryName = "PureeLogs"
     private var bundle: Bundle = Bundle.main
     private var baseDirectoryURL: URL!
@@ -57,10 +56,9 @@ public class FileLogStore: LogStore {
     public static let `default` = FileLogStore()
 
     private func fileURL(for group: String) -> URL {
-        let fileName = "\(FileLogStore.baseFileName)_\(group)"
         // Tag patterns usually contain '*'. However we don't want to use special characters in filenames
         // so encode file names to Base16
-        return baseDirectoryURL.appendingPathComponent(encodeToBase16(fileName))
+        return baseDirectoryURL.appendingPathComponent(encodeToBase16(group))
     }
     private var fileManager: FileManagerProtocol = SystemFileManager()
 
