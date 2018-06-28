@@ -35,7 +35,7 @@ class BufferedOutputTests: XCTestCase {
 
     func testBufferedOutput() {
         output.configuration.logEntryCountLimit = 1
-        XCTAssertEqual(logStore.logs(for: "pv").count, 0)
+        XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 0)
         XCTAssertEqual(output.calledWriteCount, 0)
         output.emit(log: makeLog())
         XCTAssertEqual(output.calledWriteCount, 1)
@@ -46,21 +46,21 @@ class BufferedOutputTests: XCTestCase {
         output.configuration.flushInterval = 1
 
         let storedLogs: Set<LogEntry> = Set((0..<10).map { _ in LogEntry(tag: "pv", date: Date()) })
-        logStore.add(storedLogs, for: "pv", completion: nil)
+        logStore.add(storedLogs, for: "pv_TestingBufferedOutput", completion: nil)
 
-        XCTAssertEqual(logStore.logs(for: "pv").count, 10)
+        XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 10)
         XCTAssertEqual(output.calledWriteCount, 0)
 
         output.resume()
 
-        XCTAssertEqual(logStore.logs(for: "pv").count, 0)
+        XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 0)
         XCTAssertEqual(output.calledWriteCount, 1)
     }
 
     func testBufferedOutputFlushedByInterval() {
         output.configuration.logEntryCountLimit = 10
         output.configuration.flushInterval = 1
-        XCTAssertEqual(logStore.logs(for: "pv").count, 0)
+        XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 0)
         XCTAssertEqual(output.calledWriteCount, 0)
         output.emit(log: makeLog())
         XCTAssertEqual(output.calledWriteCount, 0)
@@ -75,7 +75,7 @@ class BufferedOutputTests: XCTestCase {
     func testBufferedOutputNotFlushed() {
         output.configuration.logEntryCountLimit = 10
         output.configuration.flushInterval = 10
-        XCTAssertEqual(logStore.logs(for: "pv").count, 0)
+        XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 0)
         XCTAssertEqual(output.calledWriteCount, 0)
         output.emit(log: makeLog())
         XCTAssertEqual(output.calledWriteCount, 0)
@@ -88,11 +88,11 @@ class BufferedOutputTests: XCTestCase {
 
     func testHittingLogLimit() {
         output.configuration.logEntryCountLimit = 10
-        XCTAssertEqual(logStore.logs(for: "pv").count, 0)
+        XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 0)
         XCTAssertEqual(output.calledWriteCount, 0)
         for i in 1..<10 {
             output.emit(log: makeLog())
-            XCTAssertEqual(logStore.logs(for: "pv").count, i)
+            XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, i)
         }
         XCTAssertEqual(output.calledWriteCount, 0)
 
@@ -112,7 +112,7 @@ class BufferedOutputTests: XCTestCase {
 
         var expectation = self.expectation(description: "retry writeChunk")
         XCTAssertEqual(output.calledWriteCount, 1)
-        XCTAssertEqual(logStore.logs(for: "pv").count, 10)
+        XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 10)
         output.writeCallback = {
             expectation.fulfill()
         }
@@ -120,7 +120,7 @@ class BufferedOutputTests: XCTestCase {
 
         expectation = self.expectation(description: "retry writeChunk")
         XCTAssertEqual(output.calledWriteCount, 2)
-        XCTAssertEqual(logStore.logs(for: "pv").count, 10)
+        XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 10)
         output.writeCallback = {
             expectation.fulfill()
         }
@@ -128,7 +128,7 @@ class BufferedOutputTests: XCTestCase {
 
         expectation = self.expectation(description: "retry writeChunk")
         XCTAssertEqual(output.calledWriteCount, 3)
-        XCTAssertEqual(logStore.logs(for: "pv").count, 10)
+        XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 10)
         output.writeCallback = {
             expectation.fulfill()
         }

@@ -4,12 +4,16 @@ private let separator: Character = "."
 private let allWildcard = "**"
 private let wildcard = "*"
 
-public struct TagPattern {
+public struct TagPattern: CustomStringConvertible {
     struct Match {
         let captured: String?
     }
 
     public let pattern: String
+
+    public var description: String {
+        return pattern
+    }
 
     public init?(string patternString: String) {
         if TagPattern.isValidPattern(patternString) {
