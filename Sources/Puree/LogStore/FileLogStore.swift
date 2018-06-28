@@ -58,8 +58,8 @@ public class FileLogStore: LogStore {
 
     private func fileURL(for group: String) -> URL {
         let fileName = "\(FileLogStore.baseFileName)_\(group)"
-        // Tag patterns usually contain '*'. However we can't to use special characters in filenames.
-        // So filenames should be encoded to base16.
+        // Tag patterns usually contain '*'. However we don't want to use special characters in filenames
+        // so encode file names to Base16
         return baseDirectoryURL.appendingPathComponent(encodeToBase16(fileName))
     }
     private var fileManager: FileManagerProtocol = SystemFileManager()
