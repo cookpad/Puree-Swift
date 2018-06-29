@@ -2,7 +2,7 @@ os: osx
 osx_image: xcode9.2
 language: objective-c
 before_script: 
-  - swiftlint
+  - swiftlint --strict
   - pod lib lint
 matrix:
   include:
