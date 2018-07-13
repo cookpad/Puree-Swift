@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		BF_104851505209 /* InMemoryLogStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_613975198094 /* InMemoryLogStore.swift */; };
 		BF_180232540354 /* Output.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_848196260343 /* Output.swift */; };
-		BF_198816004411 /* TestingBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_869531157922 /* TestingBuffer.swift */; };
 		BF_210674583290 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_176166977065 /* Filter.swift */; };
 		BF_219592565366 /* Puree.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FR_479946421258 /* Puree.framework */; };
 		BF_278872148905 /* Puree.h in Headers */ = {isa = PBXBuildFile; fileRef = FR_793364177672 /* Puree.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -56,7 +55,6 @@
 		FR_818352195712 /* LogStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogStore.swift; sourceTree = "<group>"; };
 		FR_828954093903 /* DateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateProvider.swift; sourceTree = "<group>"; };
 		FR_848196260343 /* Output.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Output.swift; sourceTree = "<group>"; };
-		FR_869531157922 /* TestingBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestingBuffer.swift; sourceTree = "<group>"; };
 		FR_870064055253 /* TagPatternTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagPatternTests.swift; sourceTree = "<group>"; };
 		FR_912035359082 /* LogEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogEntry.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -73,6 +71,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		83935AC520F88CA800FA8B9A /* Output */ = {
+			isa = PBXGroup;
+			children = (
+				FR_254889461063 /* BufferedOutput.swift */,
+				FR_848196260343 /* Output.swift */,
+			);
+			path = Output;
+			sourceTree = "<group>";
+		};
 		G_1203410589804 /* LogStore */ = {
 			isa = PBXGroup;
 			children = (
@@ -108,13 +115,12 @@
 		G_3400314782399 /* Puree */ = {
 			isa = PBXGroup;
 			children = (
-				FR_254889461063 /* BufferedOutput.swift */,
 				FR_176166977065 /* Filter.swift */,
 				FR_272688927660 /* Info.plist */,
 				FR_912035359082 /* LogEntry.swift */,
 				FR_775709644702 /* Logger.swift */,
 				G_1203410589804 /* LogStore */,
-				FR_848196260343 /* Output.swift */,
+				83935AC520F88CA800FA8B9A /* Output */,
 				FR_793364177672 /* Puree.h */,
 				FR_644801390644 /* TagPattern.swift */,
 				G_3356739590045 /* Utilities */,
@@ -127,7 +133,6 @@
 			isa = PBXGroup;
 			children = (
 				FR_613975198094 /* InMemoryLogStore.swift */,
-				FR_869531157922 /* TestingBuffer.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -241,7 +246,6 @@
 				BF_647931598633 /* LogEntryTests.swift in Sources */,
 				BF_859683188258 /* LoggerTests.swift in Sources */,
 				BF_595409884047 /* TagPatternTests.swift in Sources */,
-				BF_198816004411 /* TestingBuffer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
