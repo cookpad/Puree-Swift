@@ -2,6 +2,8 @@ import Foundation
 
 open class BufferedOutput: Output {
     private let dateProvider: DateProvider = DefaultDateProvider()
+    private let readWriteQueue = DispatchQueue(label: "com.cookpad.Puree.Logger.BufferedOutput.\(arc4random())", qos: .background)
+
     public required init(logStore: LogStore, tagPattern: TagPattern, options: OutputOptions?) {
         self.logStore = logStore
         self.tagPattern = tagPattern
@@ -57,15 +59,17 @@ open class BufferedOutput: Output {
 
     public func start() {
         reloadLogStore()
-        flush()
-
+        readWriteQueue.sync {
+            flush()
+        }
         setUpTimer()
     }
 
     public func resume() {
         reloadLogStore()
-        flush()
-
+        readWriteQueue.sync {
+            flush()
+        }
         setUpTimer()
     }
 
@@ -74,12 +78,13 @@ open class BufferedOutput: Output {
     }
 
     public func emit(log: LogEntry) {
-        buffer.insert(log)
+        readWriteQueue.sync {
+            buffer.insert(log)
+            logStore.add(log, for: storageGroup, completion: nil)
 
-        logStore.add(log, for: storageGroup, completion: nil)
-
-        if buffer.count >= logLimit {
-            flush()
+            if buffer.count >= logLimit {
+                flush()
+            }
         }
     }
 
@@ -107,21 +112,30 @@ open class BufferedOutput: Output {
     @objc private func tick(_ timer: Timer) {
         if let lastFlushDate = lastFlushDate {
             if currentDate.timeIntervalSince(lastFlushDate) > flushInterval {
-                flush()
+                readWriteQueue.sync {
+                    flush()
+                }
             }
         } else {
-            flush()
+            readWriteQueue.sync {
+                flush()
+            }
         }
     }
 
     private func reloadLogStore() {
-        buffer.removeAll()
-
-        logStore.retrieveLogs(of: storageGroup) { logs in
-            buffer = buffer.union(logs)
+        readWriteQueue.sync {
+            buffer.removeAll()
+            let semaphore = DispatchSemaphore(value: 0)
+            logStore.retrieveLogs(of: storageGroup) { logs in
+                buffer = buffer.union(logs)
+                semaphore.signal()
+            }
+            semaphore.wait()
         }
     }
 
+    // must called in readWriteQueue
     private func flush() {
         lastFlushDate = currentDate
 
@@ -144,6 +158,7 @@ open class BufferedOutput: Output {
     private func callWriteChunk(_ chunk: Chunk) {
         write(chunk) { success in
             if success {
+                // TODO: needs to call in readWriteQueue
                 self.logStore.remove(chunk.logs, from: self.storageGroup, completion: nil)
                 return
             }
@@ -153,7 +168,7 @@ open class BufferedOutput: Output {
 
             if chunk.retryCount <= self.retryLimit {
                 let delay: TimeInterval = self.delay(try: chunk.retryCount)
-                DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                self.readWriteQueue.asyncAfter(deadline: .now() + delay) {
                     self.callWriteChunk(chunk)
                 }
             }

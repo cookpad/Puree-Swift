@@ -171,6 +171,7 @@ class LoggerTests: XCTestCase {
             semaphore.wait()
         }
         logger.suspend()
+
         logStore.retrieveLogs(of: "pv") { logs in
             XCTAssertEqual(logs.count, 100)
 

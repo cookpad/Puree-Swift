@@ -136,6 +136,32 @@ class BufferedOutputTests: XCTestCase {
         XCTAssertEqual(output.calledWriteCount, 4)
     }
 
+    func testParallelWrite() {
+        output.configuration.logEntryCountLimit = 3
+        output.configuration.retryLimit = 3
+
+        XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 0)
+        XCTAssertEqual(output.calledWriteCount, 0)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        let testIndices = 0..<200
+
+        for _ in testIndices {
+            DispatchQueue.global(qos: .background).async {
+                self.output.emit(log: self.makeLog())
+                semaphore.signal()
+            }
+        }
+
+        for _ in testIndices {
+            semaphore.wait()
+        }
+        output.resume()
+
+        let expectedWriteCount = Int(ceil(Double(testIndices.count) / Double(output.configuration.logEntryCountLimit)))
+        XCTAssertEqual(output.calledWriteCount, expectedWriteCount)
+    }
+
     override func tearDown() {
         super.tearDown()
 

@@ -80,6 +80,14 @@
 			path = Output;
 			sourceTree = "<group>";
 		};
+		83935AC620F8920500FA8B9A /* Output */ = {
+			isa = PBXGroup;
+			children = (
+				FR_630835297098 /* BufferedOutputTests.swift */,
+			);
+			path = Output;
+			sourceTree = "<group>";
+		};
 		G_1203410589804 /* LogStore */ = {
 			isa = PBXGroup;
 			children = (
@@ -92,11 +100,11 @@
 		G_2671118715628 /* PureeTests */ = {
 			isa = PBXGroup;
 			children = (
-				FR_630835297098 /* BufferedOutputTests.swift */,
 				FR_135157311129 /* Info.plist */,
 				FR_167045655688 /* LogEntryTests.swift */,
 				FR_657386344080 /* LoggerTests.swift */,
 				G_7185892225853 /* LogStore */,
+				83935AC620F8920500FA8B9A /* Output */,
 				FR_870064055253 /* TagPatternTests.swift */,
 				G_6662760494323 /* Utilities */,
 			);
