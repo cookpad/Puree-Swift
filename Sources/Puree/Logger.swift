@@ -19,6 +19,7 @@ public final class Logger {
     }
 
     private let configuration: Configuration
+    private let dispatchQueue = DispatchQueue(label: "com.cookpad.Puree.Logger", qos: .background)
     private(set) var filters: [Filter] = []
     private(set) var outputs: [Output] = []
 
@@ -26,7 +27,9 @@ public final class Logger {
         return configuration.dateProvider.now
     }
 
-    var logStore: LogStore {
+    public var logStore: LogStore {
+        dispatchQueue.sync {
+        }
         return configuration.logStore
     }
 
@@ -37,7 +40,7 @@ public final class Logger {
         try configureFilterPlugins()
         try configureOutputPlugins()
 
-        outputs.forEach { $0.start() }
+        start()
     }
 
     private func configureFilterPlugins() throws {
@@ -49,13 +52,15 @@ public final class Logger {
     }
 
     public func postLog(_ payload: [String: Any]?, tag: String) {
-        func matchesOutputs(with tag: String) -> [Output] {
-            return outputs.filter { $0.tagPattern.match(in: tag) != nil }
-        }
+        dispatchQueue.async {
+            func matchesOutputs(with tag: String) -> [Output] {
+                return self.outputs.filter { $0.tagPattern.match(in: tag) != nil }
+            }
 
-        for log in filteredLogs(with: payload, tag: tag) {
-            for output in matchesOutputs(with: tag) {
-                output.emit(log: log)
+            for log in self.filteredLogs(with: payload, tag: tag) {
+                for output in matchesOutputs(with: tag) {
+                    output.emit(log: log)
+                }
             }
         }
     }
@@ -74,18 +79,30 @@ public final class Logger {
         return logs
     }
 
+    private func start() {
+        dispatchQueue.sync {
+            outputs.forEach { $0.start() }
+        }
+    }
+
     public func suspend() {
-        outputs.forEach { $0.suspend() }
+        dispatchQueue.sync {
+            outputs.forEach { $0.suspend() }
+        }
     }
 
     public func resume() {
-        outputs.forEach { $0.resume() }
+        dispatchQueue.sync {
+            outputs.forEach { $0.resume() }
+        }
     }
 
     public func shutdown() {
-        filters.removeAll()
-        suspend()
-        outputs.removeAll()
+        dispatchQueue.sync {
+            filters.removeAll()
+            outputs.forEach { $0.suspend() }
+            outputs.removeAll()
+        }
     }
 
     deinit {
