@@ -27,12 +27,6 @@ public final class Logger {
         return configuration.dateProvider.now
     }
 
-    public var logStore: LogStore {
-        dispatchQueue.sync {
-        }
-        return configuration.logStore
-    }
-
     public init(configuration: Configuration) throws {
         self.configuration = configuration
 
@@ -48,7 +42,7 @@ public final class Logger {
     }
 
     private func configureOutputPlugins() throws {
-        outputs = try configuration.outputSettings.map { try $0.makeOutput(logStore) }
+        outputs = try configuration.outputSettings.map { try $0.makeOutput(configuration.logStore) }
     }
 
     public func postLog(_ payload: [String: Any]?, tag: String) {

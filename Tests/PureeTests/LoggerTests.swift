@@ -48,8 +48,9 @@ class LoggerTests: XCTestCase {
             ])
         let logger = try! Logger(configuration: configuration)
         logger.postLog(["page_name": "Top", "user_id": 100], tag: "pv")
+        logger.suspend()
 
-        logger.logStore.retrieveLogs(of: "pv") { logs in
+        logStore.retrieveLogs(of: "pv") { logs in
             XCTAssertEqual(logs.count, 1)
 
             let log = logs.first!
@@ -78,14 +79,15 @@ class LoggerTests: XCTestCase {
         logger.postLog(["page_name": "Top", "user_id": 100], tag: "pv.top")
         logger.postLog(["page_name": "Top", "user_id": 100], tag: "pv2")
         logger.postLog(["page_name": "Top", "user_id": 100], tag: "pv2")
+        logger.suspend()
 
-        logger.logStore.retrieveLogs(of: "pv") { logs in
+        logStore.retrieveLogs(of: "pv") { logs in
             XCTAssertEqual(logs.count, 0)
         }
-        logger.logStore.retrieveLogs(of: "pv2") { logs in
+        logStore.retrieveLogs(of: "pv2") { logs in
             XCTAssertEqual(logs.count, 2)
         }
-        logger.logStore.retrieveLogs(of: "pv.*") { logs in
+        logStore.retrieveLogs(of: "pv.*") { logs in
             XCTAssertEqual(logs.count, 1)
         }
     }
@@ -131,14 +133,15 @@ class LoggerTests: XCTestCase {
         logger.postLog(["page_name": "Top", "user_id": 100], tag: "pv.top")
         logger.postLog(["page_name": "Top", "user_id": 100], tag: "pv2")
         logger.postLog(["page_name": "Top", "user_id": 100], tag: "pv2")
+        logger.suspend()
 
-        logger.logStore.retrieveLogs(of: "pv") { logs in
+        logStore.retrieveLogs(of: "pv") { logs in
             XCTAssertEqual(logs.count, 0)
         }
-        logger.logStore.retrieveLogs(of: "pv2") { logs in
+        logStore.retrieveLogs(of: "pv2") { logs in
             XCTAssertEqual(logs.count, 2)
         }
-        logger.logStore.retrieveLogs(of: "pv.*") { logs in
+        logStore.retrieveLogs(of: "pv.*") { logs in
             XCTAssertEqual(logs.count, 1)
         }
     }
@@ -167,8 +170,8 @@ class LoggerTests: XCTestCase {
         for _ in testIndices {
             semaphore.wait()
         }
-
-        logger.logStore.retrieveLogs(of: "pv") { logs in
+        logger.suspend()
+        logStore.retrieveLogs(of: "pv") { logs in
             XCTAssertEqual(logs.count, 100)
 
             for index in testIndices {
