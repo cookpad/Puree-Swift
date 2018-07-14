@@ -5,7 +5,6 @@ class InMemoryLogStore: LogStore {
     private var buffer: [String: Set<LogEntry>] = [:]
 
     func prepare() throws {
-        //
     }
 
     func logs(for group: String) -> Set<LogEntry> {
@@ -20,10 +19,12 @@ class InMemoryLogStore: LogStore {
             buffer[group] = Set<LogEntry>()
         }
         buffer[group]?.formUnion(logs)
+        completion?()
     }
 
     func remove(_ logs: Set<LogEntry>, from group: String, completion: (() -> Void)?) {
         buffer[group]?.subtract(logs)
+        completion?()
     }
 
     func retrieveLogs(of group: String, completion: (Set<LogEntry>) -> Void) {

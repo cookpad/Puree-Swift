@@ -169,3 +169,22 @@ class BufferedOutputTests: XCTestCase {
         logStore.flush()
     }
 }
+
+class TestingAsyncWritingBufferedOutput: TestingBufferedOutput {
+    override func write(_ chunk: BufferedOutput.Chunk, completion: @escaping (Bool) -> Void) {
+        DispatchQueue.global().async {
+            completion(self.shouldSuccess)
+            self.writeCallback?()
+        }
+        calledWriteCount += 1
+    }
+}
+
+class AsyncWritingBufferedOutputTests: BufferedOutputTests {
+    override func setUp() {
+        logStore = InMemoryLogStore()
+        output = TestingAsyncWritingBufferedOutput(logStore: logStore, tagPattern: TagPattern(string: "pv")!, options: nil)
+        output.configuration.flushInterval = CFTimeInterval.infinity
+        output.start()
+    }
+}
