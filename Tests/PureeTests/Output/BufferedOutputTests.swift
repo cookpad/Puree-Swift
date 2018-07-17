@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-import Puree
+@testable import Puree
 
 class TestingBufferedOutput: BufferedOutput {
     var shouldSuccess: Bool = true
@@ -15,6 +15,11 @@ class TestingBufferedOutput: BufferedOutput {
 
     override func delay(try count: Int) -> TimeInterval {
         return 0.2
+    }
+
+    func waitUntilCurrentQueuedJobFinished() {
+        readWriteQueue.sync {
+        }
     }
 }
 
@@ -47,11 +52,11 @@ class BufferedOutputTests: XCTestCase {
 
         let storedLogs: Set<LogEntry> = Set((0..<10).map { _ in LogEntry(tag: "pv", date: Date()) })
         logStore.add(storedLogs, for: "pv_TestingBufferedOutput", completion: nil)
-
         XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 10)
         XCTAssertEqual(output.calledWriteCount, 0)
 
         output.resume()
+        output.waitUntilCurrentQueuedJobFinished()
 
         XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 0)
         XCTAssertEqual(output.calledWriteCount, 1)
@@ -109,6 +114,7 @@ class BufferedOutputTests: XCTestCase {
         for _ in 0..<10 {
             output.emit(log: makeLog())
         }
+        output.waitUntilCurrentQueuedJobFinished()
 
         var expectation = self.expectation(description: "retry writeChunk")
         XCTAssertEqual(output.calledWriteCount, 1)
@@ -170,21 +176,40 @@ class BufferedOutputTests: XCTestCase {
     }
 }
 
-class TestingAsyncWritingBufferedOutput: TestingBufferedOutput {
+class TestingBufferedOutputAsync: TestingBufferedOutput {
+    var writingTaskCount = 0
+
+    override var storageGroup: String {
+        return "pv_TestingBufferedOutput"
+    }
+
     override func write(_ chunk: BufferedOutput.Chunk, completion: @escaping (Bool) -> Void) {
+        writingTaskCount += 1
+        calledWriteCount += 1
         DispatchQueue.global().async {
             completion(self.shouldSuccess)
             self.writeCallback?()
+            self.writingTaskCount -= 1
         }
-        calledWriteCount += 1
+    }
+
+    override func waitUntilCurrentQueuedJobFinished() {
+        while writingTaskCount > 0 {
+            Thread.sleep(forTimeInterval: 0.01)
+        }
+        super.waitUntilCurrentQueuedJobFinished()
     }
 }
 
-class AsyncWritingBufferedOutputTests: BufferedOutputTests {
+class BufferedOutputAsyncTests: BufferedOutputTests {
     override func setUp() {
         logStore = InMemoryLogStore()
-        output = TestingAsyncWritingBufferedOutput(logStore: logStore, tagPattern: TagPattern(string: "pv")!, options: nil)
+        output = TestingBufferedOutputAsync(logStore: logStore, tagPattern: TagPattern(string: "pv")!, options: nil)
         output.configuration.flushInterval = CFTimeInterval.infinity
         output.start()
+    }
+
+    override func tearDown() {
+        output.writeCallback = nil
     }
 }

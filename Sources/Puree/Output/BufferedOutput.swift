@@ -2,7 +2,7 @@ import Foundation
 
 open class BufferedOutput: Output {
     private let dateProvider: DateProvider = DefaultDateProvider()
-    private let readWriteQueue = DispatchQueue(label: "com.cookpad.Puree.Logger.BufferedOutput.\(arc4random())", qos: .background)
+    internal let readWriteQueue = DispatchQueue(label: "com.cookpad.Puree.Logger.BufferedOutput.\(arc4random())", qos: .background)
 
     public required init(logStore: LogStore, tagPattern: TagPattern, options: OutputOptions?) {
         self.logStore = logStore
@@ -112,13 +112,13 @@ open class BufferedOutput: Output {
     @objc private func tick(_ timer: Timer) {
         if let lastFlushDate = lastFlushDate {
             if currentDate.timeIntervalSince(lastFlushDate) > flushInterval {
-                readWriteQueue.sync {
-                    flush()
+                readWriteQueue.async {
+                    self.flush()
                 }
             }
         } else {
-            readWriteQueue.sync {
-                flush()
+            readWriteQueue.async {
+                self.flush()
             }
         }
     }
@@ -135,7 +135,7 @@ open class BufferedOutput: Output {
         }
     }
 
-    // must called in readWriteQueue
+    // this function must called in readWriteQueue
     private func flush() {
         lastFlushDate = currentDate
 
@@ -158,8 +158,9 @@ open class BufferedOutput: Output {
     private func callWriteChunk(_ chunk: Chunk) {
         write(chunk) { success in
             if success {
-                // TODO: needs to call in readWriteQueue
-                self.logStore.remove(chunk.logs, from: self.storageGroup, completion: nil)
+                self.readWriteQueue.async {
+                    self.logStore.remove(chunk.logs, from: self.storageGroup, completion: nil)
+                }
                 return
             }
 
