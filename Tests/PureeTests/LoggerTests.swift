@@ -2,6 +2,8 @@ import Foundation
 import XCTest
 import Puree
 
+let buffer = TestingBuffer()
+
 struct PVLogFilter: Filter {
     init(tagPattern: TagPattern, options: FilterOptions?) {
         self.tagPattern = tagPattern
@@ -21,16 +23,14 @@ struct PVLogFilter: Filter {
 }
 
 struct PVLogOutput: Output {
-    let logStore: LogStore
     let tagPattern: TagPattern
 
     init(logStore: LogStore, tagPattern: TagPattern, options: OutputOptions?) {
-        self.logStore = logStore
         self.tagPattern = tagPattern
     }
 
     func emit(log: LogEntry) {
-        logStore.add(log, for: tagPattern.pattern, completion: nil)
+        buffer.write(log, for: tagPattern.pattern)
     }
 }
 
@@ -50,16 +50,14 @@ class LoggerTests: XCTestCase {
         logger.postLog(["page_name": "Top", "user_id": 100], tag: "pv")
         logger.suspend()
 
-        logStore.retrieveLogs(of: "pv") { logs in
-            XCTAssertEqual(logs.count, 1)
+        XCTAssertEqual(buffer.logs(for: "pv").count, 1)
 
-            let log = logs.first!
-            guard let userInfo = try? JSONSerialization.jsonObject(with: log.userData!, options: []) as! [String: Any] else {
-                return XCTFail("userInfo could not decoded")
-            }
-            XCTAssertEqual(userInfo["page_name"] as! String, "Top")
-            XCTAssertEqual(userInfo["user_id"] as! Int, 100)
+        let log = buffer.logs(for: "pv").first!
+        guard let userInfo = try? JSONSerialization.jsonObject(with: log.userData!, options: []) as! [String: Any] else {
+            return XCTFail("userInfo could not decoded")
         }
+        XCTAssertEqual(userInfo["page_name"] as! String, "Top")
+        XCTAssertEqual(userInfo["user_id"] as! Int, 100)
     }
 
     func testLoggerWithMultipleTag() {
@@ -81,15 +79,9 @@ class LoggerTests: XCTestCase {
         logger.postLog(["page_name": "Top", "user_id": 100], tag: "pv2")
         logger.suspend()
 
-        logStore.retrieveLogs(of: "pv") { logs in
-            XCTAssertEqual(logs.count, 0)
-        }
-        logStore.retrieveLogs(of: "pv2") { logs in
-            XCTAssertEqual(logs.count, 2)
-        }
-        logStore.retrieveLogs(of: "pv.*") { logs in
-            XCTAssertEqual(logs.count, 1)
-        }
+        XCTAssertEqual(buffer.logs(for: "pv").count, 0)
+        XCTAssertEqual(buffer.logs(for: "pv2").count, 2)
+        XCTAssertEqual(buffer.logs(for: "pv.*").count, 1)
     }
 
     func testLoggerWithCustomSetting() {
@@ -135,15 +127,9 @@ class LoggerTests: XCTestCase {
         logger.postLog(["page_name": "Top", "user_id": 100], tag: "pv2")
         logger.suspend()
 
-        logStore.retrieveLogs(of: "pv") { logs in
-            XCTAssertEqual(logs.count, 0)
-        }
-        logStore.retrieveLogs(of: "pv2") { logs in
-            XCTAssertEqual(logs.count, 2)
-        }
-        logStore.retrieveLogs(of: "pv.*") { logs in
-            XCTAssertEqual(logs.count, 1)
-        }
+        XCTAssertEqual(buffer.logs(for: "pv").count, 0)
+        XCTAssertEqual(buffer.logs(for: "pv2").count, 2)
+        XCTAssertEqual(buffer.logs(for: "pv.*").count, 1)
     }
 
     func testLoggerWithMultiThread() {
@@ -172,26 +158,26 @@ class LoggerTests: XCTestCase {
         }
         logger.suspend()
 
-        logStore.retrieveLogs(of: "pv") { logs in
-            XCTAssertEqual(logs.count, 100)
+        let logs = buffer.logs(for: "pv")
+        XCTAssertEqual(logs.count, 100)
 
-            for index in testIndices {
-                let found = logs.contains(where: { log -> Bool in
-                    guard let userInfo = try? JSONSerialization.jsonObject(with: log.userData!, options: []) as! [String: Any] else {
-                        XCTFail("userInfo could not decoded")
-                        return false
-                    }
+        for index in testIndices {
+            let found = logs.contains(where: { log -> Bool in
+                guard let userInfo = try? JSONSerialization.jsonObject(with: log.userData!, options: []) as! [String: Any] else {
+                    XCTFail("userInfo could not decoded")
+                    return false
+                }
 
-                    return (userInfo["index"] as! Int) == index
-                })
-                XCTAssertTrue(found)
-            }
+                return (userInfo["index"] as! Int) == index
+            })
+            XCTAssertTrue(found)
         }
     }
 
     override func tearDown() {
         super.tearDown()
 
+        buffer.flush()
         logStore.flush()
     }
 }

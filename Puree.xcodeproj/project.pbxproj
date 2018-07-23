@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		83E040602105E69F00B92093 /* TestingBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83E0405E2105E68C00B92093 /* TestingBuffer.swift */; };
 		BF_104851505209 /* InMemoryLogStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_613975198094 /* InMemoryLogStore.swift */; };
 		BF_180232540354 /* Output.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_848196260343 /* Output.swift */; };
 		BF_210674583290 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_176166977065 /* Filter.swift */; };
@@ -37,6 +38,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		83E0405E2105E68C00B92093 /* TestingBuffer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestingBuffer.swift; sourceTree = "<group>"; };
 		FR_135157311129 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FR_167045655688 /* LogEntryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogEntryTests.swift; sourceTree = "<group>"; };
 		FR_176166977065 /* Filter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
@@ -141,6 +143,7 @@
 			isa = PBXGroup;
 			children = (
 				FR_613975198094 /* InMemoryLogStore.swift */,
+				83E0405E2105E68C00B92093 /* TestingBuffer.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -252,6 +255,7 @@
 				BF_364947189323 /* FileLogStoreTests.swift in Sources */,
 				BF_104851505209 /* InMemoryLogStore.swift in Sources */,
 				BF_647931598633 /* LogEntryTests.swift in Sources */,
+				83E040602105E69F00B92093 /* TestingBuffer.swift in Sources */,
 				BF_859683188258 /* LoggerTests.swift in Sources */,
 				BF_595409884047 /* TagPatternTests.swift in Sources */,
 			);
