@@ -19,7 +19,7 @@ public final class Logger {
     }
 
     private let configuration: Configuration
-    private let dispatchQueue = DispatchQueue(label: "com.cookpad.Puree.Logger.\(arc4random())", qos: .background)
+    private let dispatchQueue = DispatchQueue(label: "com.cookpad.Puree.Logger", qos: .background)
     private(set) var filters: [Filter] = []
     private(set) var outputs: [Output] = []
 

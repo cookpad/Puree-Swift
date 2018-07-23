@@ -2,7 +2,7 @@ import Foundation
 
 open class BufferedOutput: Output {
     private let dateProvider: DateProvider = DefaultDateProvider()
-    internal let readWriteQueue = DispatchQueue(label: "com.cookpad.Puree.Logger.BufferedOutput.\(arc4random())", qos: .background)
+    internal let readWriteQueue = DispatchQueue(label: "com.cookpad.Puree.Logger.BufferedOutput", qos: .background)
 
     public required init(logStore: LogStore, tagPattern: TagPattern, options: OutputOptions?) {
         self.logStore = logStore
