@@ -135,8 +135,11 @@ open class BufferedOutput: Output {
         }
     }
 
-    // this function must called in readWriteQueue
     private func flush() {
+        if #available(iOS 10.0, *) {
+            dispatchPrecondition(condition: .onQueue(readWriteQueue))
+        }
+
         lastFlushDate = currentDate
 
         if buffer.isEmpty {

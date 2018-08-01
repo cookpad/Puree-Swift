@@ -74,8 +74,8 @@ public final class Logger {
     }
 
     private func start() {
-        dispatchQueue.sync {
-            outputs.forEach { $0.start() }
+        dispatchQueue.async {
+            self.outputs.forEach { $0.start() }
         }
     }
 

@@ -30,7 +30,7 @@ class BufferedOutputTests: XCTestCase {
     override func setUp() {
         logStore = InMemoryLogStore()
         output = TestingBufferedOutput(logStore: logStore, tagPattern: TagPattern(string: "pv")!, options: nil)
-        output.configuration.flushInterval = CFTimeInterval.infinity
+        output.configuration.flushInterval = TimeInterval.infinity
         output.start()
     }
 
@@ -205,7 +205,7 @@ class BufferedOutputAsyncTests: BufferedOutputTests {
     override func setUp() {
         logStore = InMemoryLogStore()
         output = TestingBufferedOutputAsync(logStore: logStore, tagPattern: TagPattern(string: "pv")!, options: nil)
-        output.configuration.flushInterval = CFTimeInterval.infinity
+        output.configuration.flushInterval = TimeInterval.infinity
         output.start()
     }
 
