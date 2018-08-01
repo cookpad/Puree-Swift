@@ -136,9 +136,7 @@ open class BufferedOutput: Output {
     }
 
     private func flush() {
-        if #available(iOS 10.0, *) {
-            dispatchPrecondition(condition: .onQueue(readWriteQueue))
-        }
+        dispatchPrecondition(condition: .onQueue(readWriteQueue))
 
         lastFlushDate = currentDate
 

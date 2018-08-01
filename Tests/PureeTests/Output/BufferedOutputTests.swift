@@ -149,6 +149,11 @@ class BufferedOutputTests: XCTestCase {
         XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 0)
         XCTAssertEqual(output.calledWriteCount, 0)
 
+        var writeCallbackCalledCount = 0
+        output.writeCallback = {
+            writeCallbackCalledCount += 1
+        }
+
         let semaphore = DispatchSemaphore(value: 0)
         let testIndices = 0..<200
 
@@ -166,6 +171,7 @@ class BufferedOutputTests: XCTestCase {
 
         let expectedWriteCount = Int(ceil(Double(testIndices.count) / Double(output.configuration.logEntryCountLimit)))
         XCTAssertEqual(output.calledWriteCount, expectedWriteCount)
+        XCTAssertEqual(writeCallbackCalledCount, expectedWriteCount)
     }
 
     override func tearDown() {
@@ -177,7 +183,7 @@ class BufferedOutputTests: XCTestCase {
 }
 
 class TestingBufferedOutputAsync: TestingBufferedOutput {
-    var writingTaskCount = 0
+    private var writingTaskCount = 0
 
     override var storageGroup: String {
         return "pv_TestingBufferedOutput"
