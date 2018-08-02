@@ -7,6 +7,5 @@ before_script:
 matrix:
   include:
     - env: NAME=Xcode DESTINATION="platform=iOS Simulator,name=iPhone 8"
-    - env: NAME=Xcode DESTINATION="platform=iOS Simulator,OS=9.0,name=iPhone 4s"
 script:
   - xcodebuild test -project Puree.xcodeproj -scheme PureeTests -destination "${DESTINATION}"
