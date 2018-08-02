@@ -8,6 +8,5 @@ matrix:
   include:
     - env: NAME=SPM
     - env: NAME=Xcode DESTINATION="platform=iOS Simulator,name=iPhone 8"
-    - env: NAME=Xcode DESTINATION="platform=iOS Simulator,OS=9.0,name=iPhone 4s"
 script:
   - if [ $NAME = "Xcode" ]; then xcodebuild test -project Puree.xcodeproj -scheme PureeTests -destination "${DESTINATION}"; else swift test; fi
