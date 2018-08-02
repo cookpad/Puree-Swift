@@ -169,7 +169,7 @@ class BufferedOutputTests: XCTestCase {
         }
         output.resume()
 
-        let expectedWriteCount = Int(ceil(Double(testIndices.count) / Double(output.configuration.logEntryCountLimit)))
+        let expectedWriteCount = 67
         XCTAssertEqual(output.calledWriteCount, expectedWriteCount)
         XCTAssertEqual(writeCallbackCalledCount, expectedWriteCount)
     }
@@ -183,26 +183,28 @@ class BufferedOutputTests: XCTestCase {
 }
 
 class TestingBufferedOutputAsync: TestingBufferedOutput {
-    private var writingTaskCount = 0
+    private var expectations: [XCTestExpectation] = []
+    var testCase: XCTestCase!
 
     override var storageGroup: String {
         return "pv_TestingBufferedOutput"
     }
 
     override func write(_ chunk: BufferedOutput.Chunk, completion: @escaping (Bool) -> Void) {
-        writingTaskCount += 1
         calledWriteCount += 1
+        let expectation = XCTestExpectation(description: "async writing")
+        expectations.append(expectation)
         DispatchQueue.global().async {
             completion(self.shouldSuccess)
             self.writeCallback?()
-            self.writingTaskCount -= 1
+            expectation.fulfill()
         }
     }
 
     override func waitUntilCurrentQueuedJobFinished() {
-        while writingTaskCount > 0 {
-            Thread.sleep(forTimeInterval: 0.01)
-        }
+        testCase.wait(for: expectations, timeout: 1.0)
+        expectations = []
+
         super.waitUntilCurrentQueuedJobFinished()
     }
 }
@@ -210,9 +212,11 @@ class TestingBufferedOutputAsync: TestingBufferedOutput {
 class BufferedOutputAsyncTests: BufferedOutputTests {
     override func setUp() {
         logStore = InMemoryLogStore()
-        output = TestingBufferedOutputAsync(logStore: logStore, tagPattern: TagPattern(string: "pv")!, options: nil)
-        output.configuration.flushInterval = TimeInterval.infinity
-        output.start()
+        let asyncOutput = TestingBufferedOutputAsync(logStore: logStore, tagPattern: TagPattern(string: "pv")!, options: nil)
+        asyncOutput.configuration.flushInterval = TimeInterval.infinity
+        asyncOutput.testCase = self
+        asyncOutput.start()
+        output = asyncOutput
     }
 
     override func tearDown() {
