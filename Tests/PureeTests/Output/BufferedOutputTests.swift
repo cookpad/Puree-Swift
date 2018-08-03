@@ -333,6 +333,7 @@ class BufferedOutputAsyncTests: XCTestCase {
     func testParallelWrite() {
         output.configuration.logEntryCountLimit = 2
         output.configuration.retryLimit = 3
+        output.suspend()
         let testIndices = 0..<5000
         let expectedWriteCount = 2500
 
@@ -346,9 +347,8 @@ class BufferedOutputAsyncTests: XCTestCase {
         }
 
         var writeCallbackCalledCount = 0
-        let callExpectationQueue = DispatchQueue(label: "callExpectationQueue")
         output.writeCallback = {
-            callExpectationQueue.async {
+            DispatchQueue.main.async {
                 writeCallbackCalledCount += 1
                 expectation.fulfill()
             }
