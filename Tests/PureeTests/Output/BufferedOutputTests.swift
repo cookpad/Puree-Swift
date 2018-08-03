@@ -191,6 +191,7 @@ class TestingBufferedOutputAsync: TestingBufferedOutput {
     override func write(_ chunk: BufferedOutput.Chunk, completion: @escaping (Bool) -> Void) {
         calledWriteCount += 1
         DispatchQueue.global().async {
+            Thread.sleep(forTimeInterval: 0.1)
             completion(self.shouldSuccess)
             self.writeCallback?()
         }
@@ -333,7 +334,6 @@ class BufferedOutputAsyncTests: XCTestCase {
     func testParallelWrite() {
         output.configuration.logEntryCountLimit = 2
         output.configuration.retryLimit = 3
-        output.suspend()
         let testIndices = 0..<5000
         let expectedWriteCount = 2500
 
@@ -343,7 +343,7 @@ class BufferedOutputAsyncTests: XCTestCase {
         let expectation = self.expectation(description: "async writing")
         expectation.expectedFulfillmentCount = expectedWriteCount
         output.waitUntilCurrentCompletionBlock = { [weak self] in
-            self?.wait(for: [expectation], timeout: 1.0)
+            self?.wait(for: [expectation], timeout: 5.0)
         }
 
         var writeCallbackCalledCount = 0
