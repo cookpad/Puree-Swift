@@ -162,14 +162,14 @@ class LoggerTests: XCTestCase {
         XCTAssertEqual(logs.count, 100)
 
         for index in testIndices {
-            let found = logs.contains(where: { log -> Bool in
+            let found = logs.contains { log -> Bool in
                 guard let userInfo = try? JSONSerialization.jsonObject(with: log.userData!, options: []) as! [String: Any] else {
                     XCTFail("userInfo could not decoded")
                     return false
                 }
 
                 return (userInfo["index"] as! Int) == index
-            })
+            }
             XCTAssertTrue(found)
         }
     }

@@ -10,7 +10,7 @@ open class BufferedOutput: Output {
         self.options = options
     }
 
-    public struct Chunk: Equatable {
+    public struct Chunk: Hashable {
         public let logs: Set<LogEntry>
         private(set) var retryCount: Int = 0
 
@@ -24,6 +24,10 @@ open class BufferedOutput: Output {
 
         public static func == (lhs: Chunk, rhs: Chunk) -> Bool {
             return lhs.logs == rhs.logs
+        }
+
+        public var hashValue: Int {
+            return logs.hashValue
         }
     }
     public struct Configuration {
@@ -40,7 +44,7 @@ open class BufferedOutput: Output {
     public var configuration: Configuration = .default
 
     private var buffer: Set<LogEntry> = []
-    private var currentWritingChunk: [Chunk] = []
+    private var currentWritingChunks: Set<Chunk> = []
     private var timer: Timer?
     private var lastFlushDate: Date?
     private var logLimit: Int {
@@ -134,9 +138,9 @@ open class BufferedOutput: Output {
             let semaphore = DispatchSemaphore(value: 0)
             logStore.retrieveLogs(of: storageGroup) { logs in
                 let filteredLogs = logs.filter { log in
-                    return !currentWritingChunk.contains(where: { chunk in
+                    return !currentWritingChunks.contains { chunk in
                         return chunk.logs.contains(log)
-                    })
+                    }
                 }
                 buffer = buffer.union(filteredLogs)
                 semaphore.signal()
@@ -169,13 +173,11 @@ open class BufferedOutput: Output {
     private func callWriteChunk(_ chunk: Chunk) {
         dispatchPrecondition(condition: .onQueue(readWriteQueue))
 
-        currentWritingChunk.append(chunk)
+        currentWritingChunks.insert(chunk)
         write(chunk) { success in
             if success {
                 self.readWriteQueue.async {
-                    if let index = self.currentWritingChunk.index(of: chunk) {
-                        self.currentWritingChunk.remove(at: index)
-                    }
+                    self.currentWritingChunks.remove(chunk)
                     self.logStore.remove(chunk.logs, from: self.storageGroup, completion: nil)
                 }
                 return

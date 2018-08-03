@@ -31,10 +31,9 @@ class TestingBufferedOutput: BufferedOutput {
 
 class BufferedOutputTests: XCTestCase {
     var output: TestingBufferedOutput!
-    var logStore: InMemoryLogStore!
+    let logStore = InMemoryLogStore()
 
     override func setUp() {
-        logStore = InMemoryLogStore()
         output = TestingBufferedOutput(logStore: logStore, tagPattern: TagPattern(string: "pv")!, options: nil)
         output.configuration.flushInterval = TimeInterval.infinity
         output.start()
@@ -52,7 +51,7 @@ class BufferedOutputTests: XCTestCase {
         output.configuration.logEntryCountLimit = 10
         output.configuration.flushInterval = 1
 
-        let storedLogs: Set<LogEntry> = Set((0..<10).map { _ in LogEntry(tag: "pv", date: Date()) })
+        let storedLogs: Set<LogEntry> = Set((0..<10).map { _ in makeLog() })
         logStore.add(storedLogs, for: "pv_TestingBufferedOutput", completion: nil)
         XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 10)
         XCTAssertEqual(output.calledWriteCount, 0)
@@ -200,10 +199,9 @@ class TestingBufferedOutputAsync: TestingBufferedOutput {
 
 class BufferedOutputAsyncTests: XCTestCase {
     var output: TestingBufferedOutputAsync!
-    var logStore: InMemoryLogStore!
+    let logStore = InMemoryLogStore()
 
     override func setUp() {
-        logStore = InMemoryLogStore()
         output = TestingBufferedOutputAsync(logStore: logStore, tagPattern: TagPattern(string: "pv")!, options: nil)
         output.configuration.flushInterval = TimeInterval.infinity
         output.start()
@@ -229,7 +227,7 @@ class BufferedOutputAsyncTests: XCTestCase {
             self?.wait(for: [expectation], timeout: 1.0)
         }
 
-        let storedLogs: Set<LogEntry> = Set((0..<10).map { _ in LogEntry(tag: "pv", date: Date()) })
+        let storedLogs: Set<LogEntry> = Set((0..<10).map { _ in makeLog() })
         logStore.add(storedLogs, for: "pv_TestingBufferedOutput", completion: nil)
         XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 10)
         XCTAssertEqual(output.calledWriteCount, 0)
