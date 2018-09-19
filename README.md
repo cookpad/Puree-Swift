@@ -1,5 +1,7 @@
 # Puree
 
+![](Documentation/logo.png)
+
 [![Build Status](https://travis-ci.org/cookpad/Puree-Swift.svg?branch=master)](https://travis-ci.org/cookpad/Puree-Swift)
 [![Language](https://img.shields.io/badge/language-Swift%204.0.2-orange.svg)](https://swift.org)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage) 
