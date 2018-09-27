@@ -86,8 +86,8 @@ public final class Logger {
     }
 
     public func resume() {
-        dispatchQueue.sync {
-            outputs.forEach { $0.resume() }
+        dispatchQueue.async {
+            self.outputs.forEach { $0.resume() }
         }
     }
 
