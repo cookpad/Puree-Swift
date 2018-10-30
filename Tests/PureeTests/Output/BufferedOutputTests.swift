@@ -146,8 +146,8 @@ class BufferedOutputTests: XCTestCase {
     func testParallelWrite() {
         output.configuration.logEntryCountLimit = 2
         output.configuration.retryLimit = 3
-        let testIndices = 0..<5000
-        let expectedWriteCount = 2500
+        let testIndices = 0..<1000
+        let expectedWriteCount = 500
 
         XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 0)
         XCTAssertEqual(output.calledWriteCount, 0)
@@ -332,8 +332,8 @@ class BufferedOutputAsyncTests: XCTestCase {
     func testParallelWrite() {
         output.configuration.logEntryCountLimit = 2
         output.configuration.retryLimit = 3
-        let testIndices = 0..<5000
-        let expectedWriteCount = 2500
+        let testIndices = 0..<1000
+        let expectedWriteCount = 500
 
         XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 0)
         XCTAssertEqual(output.calledWriteCount, 0)
