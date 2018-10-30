@@ -44,7 +44,7 @@
 		FR_176166977065 /* Filter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		FR_254889461063 /* BufferedOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferedOutput.swift; sourceTree = "<group>"; };
 		FR_272688927660 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		FR_412093004181 /* PureeTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = PureeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FR_412093004181 /* PureeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PureeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FR_479946421258 /* Puree.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Puree.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FR_613975198094 /* InMemoryLogStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InMemoryLogStore.swift; sourceTree = "<group>"; };
 		FR_630835297098 /* BufferedOutputTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferedOutputTests.swift; sourceTree = "<group>"; };
@@ -228,6 +228,14 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0940;
+				TargetAttributes = {
+					NT_412093004181 = {
+						LastSwiftMigration = 1000;
+					};
+					NT_479946421258 = {
+						LastSwiftMigration = 1000;
+					};
+				};
 			};
 			buildConfigurationList = CL_479946421258 /* Build configuration list for PBXProject "Puree" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -297,6 +305,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -319,6 +328,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.cookpad.Puree;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -400,6 +410,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.cookpad.Puree;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -414,6 +425,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
