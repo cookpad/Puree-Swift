@@ -35,7 +35,7 @@ github "cookpad/Puree-Swift"
 ```ruby
 use_frameworks!
 
-pod 'Puree', '~> 3.0'
+pod 'Puree', '~> 4.0'
 ```
 
 ## Usage
