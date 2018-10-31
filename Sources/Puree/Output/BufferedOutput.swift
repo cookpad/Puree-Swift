@@ -2,13 +2,15 @@ import Foundation
 
 open class BufferedOutput: Output {
     private let dateProvider: DateProvider = DefaultDateProvider()
+    internal let readWriteQueue = DispatchQueue(label: "com.cookpad.Puree.Logger.BufferedOutput", qos: .background)
+
     public required init(logStore: LogStore, tagPattern: TagPattern, options: OutputOptions?) {
         self.logStore = logStore
         self.tagPattern = tagPattern
         self.options = options
     }
 
-    public struct Chunk {
+    public struct Chunk: Hashable {
         public let logs: Set<LogEntry>
         private(set) var retryCount: Int = 0
 
@@ -18,6 +20,14 @@ open class BufferedOutput: Output {
 
         fileprivate mutating func incrementRetryCount() {
             retryCount += 1
+        }
+
+        public static func == (lhs: Chunk, rhs: Chunk) -> Bool {
+            return lhs.logs == rhs.logs
+        }
+
+        public var hashValue: Int {
+            return logs.hashValue
         }
     }
     public struct Configuration {
@@ -34,6 +44,7 @@ open class BufferedOutput: Output {
     public var configuration: Configuration = .default
 
     private var buffer: Set<LogEntry> = []
+    private var currentWritingChunks: Set<Chunk> = []
     private var timer: Timer?
     private var lastFlushDate: Date?
     private var logLimit: Int {
@@ -57,15 +68,17 @@ open class BufferedOutput: Output {
 
     public func start() {
         reloadLogStore()
-        flush()
-
+        readWriteQueue.sync {
+            flush()
+        }
         setUpTimer()
     }
 
     public func resume() {
         reloadLogStore()
-        flush()
-
+        readWriteQueue.sync {
+            flush()
+        }
         setUpTimer()
     }
 
@@ -74,12 +87,13 @@ open class BufferedOutput: Output {
     }
 
     public func emit(log: LogEntry) {
-        buffer.insert(log)
+        readWriteQueue.sync {
+            buffer.insert(log)
+            logStore.add(log, for: storageGroup, completion: nil)
 
-        logStore.add(log, for: storageGroup, completion: nil)
-
-        if buffer.count >= logLimit {
-            flush()
+            if buffer.count >= logLimit {
+                flush()
+            }
         }
     }
 
@@ -100,29 +114,44 @@ open class BufferedOutput: Output {
                           selector: #selector(tick(_:)),
                           userInfo: nil,
                           repeats: true)
-        RunLoop.current.add(timer, forMode: .commonModes)
+        RunLoop.current.add(timer, forMode: .common)
         self.timer = timer
     }
 
     @objc private func tick(_ timer: Timer) {
         if let lastFlushDate = lastFlushDate {
             if currentDate.timeIntervalSince(lastFlushDate) > flushInterval {
-                flush()
+                readWriteQueue.async {
+                    self.flush()
+                }
             }
         } else {
-            flush()
+            readWriteQueue.async {
+                self.flush()
+            }
         }
     }
 
     private func reloadLogStore() {
-        buffer.removeAll()
-
-        logStore.retrieveLogs(of: storageGroup) { logs in
-            buffer = buffer.union(logs)
+        readWriteQueue.sync {
+            buffer.removeAll()
+            let semaphore = DispatchSemaphore(value: 0)
+            logStore.retrieveLogs(of: storageGroup) { logs in
+                let filteredLogs = logs.filter { log in
+                    return !currentWritingChunks.contains { chunk in
+                        return chunk.logs.contains(log)
+                    }
+                }
+                buffer = buffer.union(filteredLogs)
+                semaphore.signal()
+            }
+            semaphore.wait()
         }
     }
 
     private func flush() {
+        dispatchPrecondition(condition: .onQueue(readWriteQueue))
+
         lastFlushDate = currentDate
 
         if buffer.isEmpty {
@@ -142,9 +171,15 @@ open class BufferedOutput: Output {
     }
 
     private func callWriteChunk(_ chunk: Chunk) {
+        dispatchPrecondition(condition: .onQueue(readWriteQueue))
+
+        currentWritingChunks.insert(chunk)
         write(chunk) { success in
             if success {
-                self.logStore.remove(chunk.logs, from: self.storageGroup, completion: nil)
+                self.readWriteQueue.async {
+                    self.currentWritingChunks.remove(chunk)
+                    self.logStore.remove(chunk.logs, from: self.storageGroup, completion: nil)
+                }
                 return
             }
 
@@ -153,7 +188,7 @@ open class BufferedOutput: Output {
 
             if chunk.retryCount <= self.retryLimit {
                 let delay: TimeInterval = self.delay(try: chunk.retryCount)
-                DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                self.readWriteQueue.asyncAfter(deadline: .now() + delay) {
                     self.callWriteChunk(chunk)
                 }
             }

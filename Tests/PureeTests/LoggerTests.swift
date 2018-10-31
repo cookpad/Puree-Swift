@@ -23,11 +23,9 @@ struct PVLogFilter: Filter {
 }
 
 struct PVLogOutput: Output {
-    let logStore: LogStore
     let tagPattern: TagPattern
 
     init(logStore: LogStore, tagPattern: TagPattern, options: OutputOptions?) {
-        self.logStore = logStore
         self.tagPattern = tagPattern
     }
 
@@ -50,6 +48,7 @@ class LoggerTests: XCTestCase {
             ])
         let logger = try! Logger(configuration: configuration)
         logger.postLog(["page_name": "Top", "user_id": 100], tag: "pv")
+        logger.suspend()
 
         XCTAssertEqual(buffer.logs(for: "pv").count, 1)
 
@@ -78,6 +77,7 @@ class LoggerTests: XCTestCase {
         logger.postLog(["page_name": "Top", "user_id": 100], tag: "pv.top")
         logger.postLog(["page_name": "Top", "user_id": 100], tag: "pv2")
         logger.postLog(["page_name": "Top", "user_id": 100], tag: "pv2")
+        logger.suspend()
 
         XCTAssertEqual(buffer.logs(for: "pv").count, 0)
         XCTAssertEqual(buffer.logs(for: "pv2").count, 2)
@@ -125,10 +125,53 @@ class LoggerTests: XCTestCase {
         logger.postLog(["page_name": "Top", "user_id": 100], tag: "pv.top")
         logger.postLog(["page_name": "Top", "user_id": 100], tag: "pv2")
         logger.postLog(["page_name": "Top", "user_id": 100], tag: "pv2")
+        logger.suspend()
 
         XCTAssertEqual(buffer.logs(for: "pv").count, 0)
         XCTAssertEqual(buffer.logs(for: "pv2").count, 2)
         XCTAssertEqual(buffer.logs(for: "pv.*").count, 1)
+    }
+
+    func testLoggerWithMultiThread() {
+        let configuration = Logger.Configuration(logStore: logStore,
+                                                 dateProvider: DefaultDateProvider(),
+                                                 filterSettings: [
+                                                    FilterSetting(PVLogFilter.self, tagPattern: TagPattern(string: "pv")!),
+                                                    ],
+                                                 outputSettings: [
+                                                    OutputSetting(PVLogOutput.self, tagPattern: TagPattern(string: "pv")!),
+                                                    ])
+        let logger = try! Logger(configuration: configuration)
+
+        let semaphore = DispatchSemaphore(value: 0)
+        let testIndices = 0..<100
+
+        for index in testIndices {
+            DispatchQueue.global(qos: .background).async {
+                logger.postLog(["queue": "global", "index": index], tag: "pv")
+                semaphore.signal()
+            }
+        }
+
+        for _ in testIndices {
+            semaphore.wait()
+        }
+        logger.suspend()
+
+        let logs = buffer.logs(for: "pv")
+        XCTAssertEqual(logs.count, 100)
+
+        for index in testIndices {
+            let found = logs.contains { log -> Bool in
+                guard let userInfo = try? JSONSerialization.jsonObject(with: log.userData!, options: []) as! [String: Any] else {
+                    XCTFail("userInfo could not decoded")
+                    return false
+                }
+
+                return (userInfo["index"] as! Int) == index
+            }
+            XCTAssertTrue(found)
+        }
     }
 
     override func tearDown() {

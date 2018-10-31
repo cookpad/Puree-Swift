@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		83E040602105E69F00B92093 /* TestingBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83E0405E2105E68C00B92093 /* TestingBuffer.swift */; };
 		BF_104851505209 /* InMemoryLogStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_613975198094 /* InMemoryLogStore.swift */; };
 		BF_180232540354 /* Output.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_848196260343 /* Output.swift */; };
-		BF_198816004411 /* TestingBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_869531157922 /* TestingBuffer.swift */; };
 		BF_210674583290 /* Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FR_176166977065 /* Filter.swift */; };
 		BF_219592565366 /* Puree.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FR_479946421258 /* Puree.framework */; };
 		BF_278872148905 /* Puree.h in Headers */ = {isa = PBXBuildFile; fileRef = FR_793364177672 /* Puree.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -38,12 +38,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		83E0405E2105E68C00B92093 /* TestingBuffer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestingBuffer.swift; sourceTree = "<group>"; };
 		FR_135157311129 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FR_167045655688 /* LogEntryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogEntryTests.swift; sourceTree = "<group>"; };
 		FR_176166977065 /* Filter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Filter.swift; sourceTree = "<group>"; };
 		FR_254889461063 /* BufferedOutput.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferedOutput.swift; sourceTree = "<group>"; };
 		FR_272688927660 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		FR_412093004181 /* PureeTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = PureeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FR_412093004181 /* PureeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PureeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FR_479946421258 /* Puree.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Puree.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		FR_613975198094 /* InMemoryLogStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InMemoryLogStore.swift; sourceTree = "<group>"; };
 		FR_630835297098 /* BufferedOutputTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BufferedOutputTests.swift; sourceTree = "<group>"; };
@@ -56,7 +57,6 @@
 		FR_818352195712 /* LogStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogStore.swift; sourceTree = "<group>"; };
 		FR_828954093903 /* DateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateProvider.swift; sourceTree = "<group>"; };
 		FR_848196260343 /* Output.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Output.swift; sourceTree = "<group>"; };
-		FR_869531157922 /* TestingBuffer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestingBuffer.swift; sourceTree = "<group>"; };
 		FR_870064055253 /* TagPatternTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagPatternTests.swift; sourceTree = "<group>"; };
 		FR_912035359082 /* LogEntry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogEntry.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -73,6 +73,23 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		83935AC520F88CA800FA8B9A /* Output */ = {
+			isa = PBXGroup;
+			children = (
+				FR_254889461063 /* BufferedOutput.swift */,
+				FR_848196260343 /* Output.swift */,
+			);
+			path = Output;
+			sourceTree = "<group>";
+		};
+		83935AC620F8920500FA8B9A /* Output */ = {
+			isa = PBXGroup;
+			children = (
+				FR_630835297098 /* BufferedOutputTests.swift */,
+			);
+			path = Output;
+			sourceTree = "<group>";
+		};
 		G_1203410589804 /* LogStore */ = {
 			isa = PBXGroup;
 			children = (
@@ -85,11 +102,11 @@
 		G_2671118715628 /* PureeTests */ = {
 			isa = PBXGroup;
 			children = (
-				FR_630835297098 /* BufferedOutputTests.swift */,
 				FR_135157311129 /* Info.plist */,
 				FR_167045655688 /* LogEntryTests.swift */,
 				FR_657386344080 /* LoggerTests.swift */,
 				G_7185892225853 /* LogStore */,
+				83935AC620F8920500FA8B9A /* Output */,
 				FR_870064055253 /* TagPatternTests.swift */,
 				G_6662760494323 /* Utilities */,
 			);
@@ -108,13 +125,12 @@
 		G_3400314782399 /* Puree */ = {
 			isa = PBXGroup;
 			children = (
-				FR_254889461063 /* BufferedOutput.swift */,
 				FR_176166977065 /* Filter.swift */,
 				FR_272688927660 /* Info.plist */,
 				FR_912035359082 /* LogEntry.swift */,
 				FR_775709644702 /* Logger.swift */,
 				G_1203410589804 /* LogStore */,
-				FR_848196260343 /* Output.swift */,
+				83935AC520F88CA800FA8B9A /* Output */,
 				FR_793364177672 /* Puree.h */,
 				FR_644801390644 /* TagPattern.swift */,
 				G_3356739590045 /* Utilities */,
@@ -127,7 +143,7 @@
 			isa = PBXGroup;
 			children = (
 				FR_613975198094 /* InMemoryLogStore.swift */,
-				FR_869531157922 /* TestingBuffer.swift */,
+				83E0405E2105E68C00B92093 /* TestingBuffer.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -212,6 +228,14 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0940;
+				TargetAttributes = {
+					NT_412093004181 = {
+						LastSwiftMigration = 1000;
+					};
+					NT_479946421258 = {
+						LastSwiftMigration = 1000;
+					};
+				};
 			};
 			buildConfigurationList = CL_479946421258 /* Build configuration list for PBXProject "Puree" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -239,9 +263,9 @@
 				BF_364947189323 /* FileLogStoreTests.swift in Sources */,
 				BF_104851505209 /* InMemoryLogStore.swift in Sources */,
 				BF_647931598633 /* LogEntryTests.swift in Sources */,
+				83E040602105E69F00B92093 /* TestingBuffer.swift in Sources */,
 				BF_859683188258 /* LoggerTests.swift in Sources */,
 				BF_595409884047 /* TagPatternTests.swift in Sources */,
-				BF_198816004411 /* TestingBuffer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -281,6 +305,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -298,11 +323,12 @@
 				ENABLE_TESTABILITY = YES;
 				INFOPLIST_FILE = Sources/Puree/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cookpad.Puree;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -379,11 +405,12 @@
 				ENABLE_TESTABILITY = YES;
 				INFOPLIST_FILE = Sources/Puree/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.cookpad.Puree;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -398,6 +425,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				SDKROOT = iphoneos;
+				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
