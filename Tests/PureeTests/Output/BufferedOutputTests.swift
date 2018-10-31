@@ -75,7 +75,7 @@ class BufferedOutputTests: XCTestCase {
         output.writeCallback = {
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 2.0)
+        wait(for: [expectation], timeout: 10.0)
     }
 
     func testBufferedOutputNotFlushed() {
@@ -123,7 +123,7 @@ class BufferedOutputTests: XCTestCase {
         output.writeCallback = {
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 1.0)
+        wait(for: [expectation], timeout: 5.0)
 
         expectation = self.expectation(description: "retry writeChunk")
         XCTAssertEqual(output.calledWriteCount, 2)
@@ -131,7 +131,7 @@ class BufferedOutputTests: XCTestCase {
         output.writeCallback = {
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 1.0)
+        wait(for: [expectation], timeout: 5.0)
 
         expectation = self.expectation(description: "retry writeChunk")
         XCTAssertEqual(output.calledWriteCount, 3)
@@ -139,15 +139,15 @@ class BufferedOutputTests: XCTestCase {
         output.writeCallback = {
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 1.0)
+        wait(for: [expectation], timeout: 5.0)
         XCTAssertEqual(output.calledWriteCount, 4)
     }
 
     func testParallelWrite() {
         output.configuration.logEntryCountLimit = 2
         output.configuration.retryLimit = 3
-        let testIndices = 0..<5000
-        let expectedWriteCount = 2500
+        let testIndices = 0..<1000
+        let expectedWriteCount = 500
 
         XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 0)
         XCTAssertEqual(output.calledWriteCount, 0)
@@ -251,7 +251,7 @@ class BufferedOutputAsyncTests: XCTestCase {
         output.writeCallback = {
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 2.0)
+        wait(for: [expectation], timeout: 10.0)
     }
 
     func testBufferedOutputNotFlushed() {
@@ -293,7 +293,7 @@ class BufferedOutputAsyncTests: XCTestCase {
             expectation.fulfill()
         }
         output.waitUntilCurrentCompletionBlock = { [weak self] in
-            self?.wait(for: [expectation], timeout: 1.0)
+            self?.wait(for: [expectation], timeout: 5.0)
         }
 
         XCTAssertEqual(output.calledWriteCount, 0)
@@ -309,7 +309,7 @@ class BufferedOutputAsyncTests: XCTestCase {
         output.writeCallback = {
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 1.0)
+        wait(for: [expectation], timeout: 5.0)
         XCTAssertEqual(output.calledWriteCount, 2)
         XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 10)
 
@@ -317,7 +317,7 @@ class BufferedOutputAsyncTests: XCTestCase {
         output.writeCallback = {
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 1.0)
+        wait(for: [expectation], timeout: 5.0)
         XCTAssertEqual(output.calledWriteCount, 3)
         XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 10)
 
@@ -325,15 +325,15 @@ class BufferedOutputAsyncTests: XCTestCase {
         output.writeCallback = {
             expectation.fulfill()
         }
-        wait(for: [expectation], timeout: 1.0)
+        wait(for: [expectation], timeout: 5.0)
         XCTAssertEqual(output.calledWriteCount, 4)
     }
 
     func testParallelWrite() {
         output.configuration.logEntryCountLimit = 2
         output.configuration.retryLimit = 3
-        let testIndices = 0..<5000
-        let expectedWriteCount = 2500
+        let testIndices = 0..<1000
+        let expectedWriteCount = 500
 
         XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 0)
         XCTAssertEqual(output.calledWriteCount, 0)
@@ -341,7 +341,7 @@ class BufferedOutputAsyncTests: XCTestCase {
         let expectation = self.expectation(description: "async writing")
         expectation.expectedFulfillmentCount = expectedWriteCount
         output.waitUntilCurrentCompletionBlock = { [weak self] in
-            self?.wait(for: [expectation], timeout: 5.0)
+            self?.wait(for: [expectation], timeout: 20.0)
         }
 
         var writeCallbackCalledCount = 0
