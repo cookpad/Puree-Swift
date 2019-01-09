@@ -378,3 +378,27 @@ class BufferedOutputAsyncTests: XCTestCase {
         logStore.flush()
     }
 }
+
+class BufferedOutputDispatchQueueTests: XCTestCase {
+
+    func testFlushIntervalOnDifferentDispatchQueue() {
+        let exp = expectation(description: #function)
+        let dispatchQueue = DispatchQueue(label: "com.cookpad.Puree.Logger", qos: .background)
+
+        dispatchQueue.async {
+            let logStore = InMemoryLogStore()
+            let output = TestingBufferedOutput(logStore: logStore, tagPattern: TagPattern(string: "pv")!, options: nil)
+            output.configuration = BufferedOutput.Configuration(logEntryCountLimit: 5, flushInterval: 0, retryLimit: 3)
+            output.start()
+
+            output.emit(log: makeLog())
+
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                XCTAssertEqual(output.calledWriteCount, 1)
+                exp.fulfill()
+            }
+        }
+
+        waitForExpectations(timeout: 10.0)
+    }
+}

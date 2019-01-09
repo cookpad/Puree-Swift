@@ -114,7 +114,7 @@ open class BufferedOutput: Output {
                           selector: #selector(tick(_:)),
                           userInfo: nil,
                           repeats: true)
-        RunLoop.current.add(timer, forMode: .common)
+        RunLoop.main.add(timer, forMode: .common)
         self.timer = timer
     }
 
