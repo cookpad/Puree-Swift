@@ -381,30 +381,24 @@ class BufferedOutputAsyncTests: XCTestCase {
 
 class BufferedOutputDispatchQueueTests: XCTestCase {
 
-    func testFlushInterval() {
+    func testFlushIntervalOnDifferentDispatchQueue() {
         let exp = expectation(description: #function)
-
-        // Run the test on a background queue
         let dispatchQueue = DispatchQueue(label: "com.cookpad.Puree.Logger", qos: .background)
-        dispatchQueue.async {
 
-            // Setup the output
+        dispatchQueue.async {
             let logStore = InMemoryLogStore()
             let output = TestingBufferedOutput(logStore: logStore, tagPattern: TagPattern(string: "pv")!, options: nil)
             output.configuration = BufferedOutput.Configuration(logEntryCountLimit: 5, flushInterval: 0, retryLimit: 3)
             output.start()
 
-            // Add a log to the buffer. The configuration should cause it to be flushed on the next timer event
             output.emit(log: makeLog())
 
-            // Verify that the buffer was written
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 XCTAssertEqual(output.calledWriteCount, 1)
                 exp.fulfill()
             }
         }
 
-        // The internal timer should perform a flush within 1 second.
         waitForExpectations(timeout: 10.0)
     }
 }
