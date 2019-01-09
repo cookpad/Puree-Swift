@@ -1,7 +1,8 @@
-included: 
+included:
   - Sources
   - Tests/PureeTests
 disabled_rules:
   - line_length
+  - file_length
 trailing_comma:
   mandatory_comma: true
