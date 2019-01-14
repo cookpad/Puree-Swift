@@ -98,8 +98,4 @@ public final class Logger {
             outputs.removeAll()
         }
     }
-
-    deinit {
-        shutdown()
-    }
 }
