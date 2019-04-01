@@ -6,8 +6,8 @@ public struct LogEntry: Codable, Hashable {
     public var date: Date
     public var userData: Data?
 
-    public var hashValue: Int {
-        return identifier.hashValue
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(identifier)
     }
 
     public static func == (lhs: LogEntry, rhs: LogEntry) -> Bool {

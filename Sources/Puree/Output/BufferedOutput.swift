@@ -26,8 +26,8 @@ open class BufferedOutput: Output {
             return lhs.logs == rhs.logs
         }
 
-        public var hashValue: Int {
-            return logs.hashValue
+        public func hash(into hasher: inout Hasher) {
+            hasher.combine(logs)
         }
     }
     public struct Configuration {
