@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "Puree"
-  s.version      = "4.0.2"
+  s.version      = "5.0.0"
   s.summary      = "Awesome log aggregator"
   s.homepage     = "https://github.com/cookpad/Puree-Swift"
   s.license      = { :type => "MIT", :file => "LICENSE" }
@@ -8,4 +8,5 @@ Pod::Spec.new do |s|
   s.platform     = :ios, "10.0"
   s.source       = { :git => "https://github.com/cookpad/Puree-Swift.git", :tag => "#{s.version}" }
   s.source_files  = "Sources/**/*.{h,swift}"
+  s.swift_version = "5.0.0"
 end
