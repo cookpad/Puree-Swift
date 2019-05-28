@@ -22,10 +22,10 @@ struct PVLogFilter: Filter {
     }
 }
 
-struct PVLogOutput: InstantiatableOutput {
+struct PVLogOutput: Output {
     let tagPattern: TagPattern
 
-    init(logStore: LogStore, tagPattern: TagPattern, options: OutputOptions?) {
+    init(logStore: LogStore, tagPattern: TagPattern, options: [String: Any]? = nil) {
         self.tagPattern = tagPattern
     }
 
@@ -44,7 +44,9 @@ class LoggerTests: XCTestCase {
                                                     FilterSetting(PVLogFilter.self, tagPattern: TagPattern(string: "pv")!),
             ],
                                                  outputSettings: [
-                                                    OutputSetting(PVLogOutput.self, tagPattern: TagPattern(string: "pv")!),
+                                                    OutputSetting {
+                                                        PVLogOutput(logStore: $0, tagPattern: TagPattern(string: "pv")!)
+                                                    },
             ])
         let logger = try! Logger(configuration: configuration)
         logger.postLog(["page_name": "Top", "user_id": 100], tag: "pv")
@@ -69,9 +71,15 @@ class LoggerTests: XCTestCase {
                                                     FilterSetting(PVLogFilter.self, tagPattern: TagPattern(string: "pv.*")!),
             ],
                                                  outputSettings: [
-                                                    OutputSetting(PVLogOutput.self, tagPattern: TagPattern(string: "pv")!),
-                                                    OutputSetting(PVLogOutput.self, tagPattern: TagPattern(string: "pv2")!),
-                                                    OutputSetting(PVLogOutput.self, tagPattern: TagPattern(string: "pv.*")!),
+                                                    OutputSetting {
+                                                        PVLogOutput(logStore: $0, tagPattern: TagPattern(string: "pv")!)
+                                                    },
+                                                    OutputSetting {
+                                                        PVLogOutput(logStore: $0, tagPattern: TagPattern(string: "pv2")!)
+                                                    },
+                                                    OutputSetting {
+                                                        PVLogOutput(logStore: $0, tagPattern: TagPattern(string: "pv.*")!)
+                                                    },
             ])
         let logger = try! Logger(configuration: configuration)
         logger.postLog(["page_name": "Top", "user_id": 100], tag: "pv.top")
@@ -117,9 +125,13 @@ class LoggerTests: XCTestCase {
                                                     FilterSetting(PVLogFilter.self, tagPattern: TagPattern(string: "pv.*")!),
             ],
                                                  outputSettings: [
-                                                    OutputSetting(PVLogOutput.self, tagPattern: TagPattern(string: "pv")!),
+                                                    OutputSetting {
+                                                        PVLogOutput(logStore: $0, tagPattern: TagPattern(string: "pv")!)
+                                                    },
                                                     CustomOutputSetting(tableName: "pv_log"),
-                                                    OutputSetting(PVLogOutput.self, tagPattern: TagPattern(string: "pv.*")!),
+                                                    OutputSetting {
+                                                        PVLogOutput(logStore: $0, tagPattern: TagPattern(string: "pv.*")!)
+                                                    },
             ])
         let logger = try! Logger(configuration: configuration)
         logger.postLog(["page_name": "Top", "user_id": 100], tag: "pv.top")
@@ -139,7 +151,9 @@ class LoggerTests: XCTestCase {
                                                     FilterSetting(PVLogFilter.self, tagPattern: TagPattern(string: "pv")!),
                                                     ],
                                                  outputSettings: [
-                                                    OutputSetting(PVLogOutput.self, tagPattern: TagPattern(string: "pv")!),
+                                                    OutputSetting {
+                                                        PVLogOutput(logStore: $0, tagPattern: TagPattern(string: "pv")!)
+                                                    },
                                                     ])
         let logger = try! Logger(configuration: configuration)
 

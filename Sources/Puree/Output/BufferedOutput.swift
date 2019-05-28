@@ -7,7 +7,6 @@ open class BufferedOutput: Output {
     public init(logStore: LogStore, tagPattern: TagPattern) {
         self.logStore = logStore
         self.tagPattern = tagPattern
-        self.options = options
     }
 
     public struct Chunk: Hashable {
@@ -39,7 +38,6 @@ open class BufferedOutput: Output {
     }
 
     public let tagPattern: TagPattern
-    public let options: OutputOptions?
     private let logStore: LogStore
     public var configuration: Configuration = .default
 

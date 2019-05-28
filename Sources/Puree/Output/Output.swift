@@ -1,15 +1,18 @@
 import Foundation
 
-public typealias OutputOptions = [String: Any]
-
 public protocol OutputSettingProtocol {
     func makeOutput(_ logStore: LogStore) throws -> Output
 }
 
 public struct OutputSetting: OutputSettingProtocol {
-    public init<O: InstantiatableOutput>(_ output: O.Type, tagPattern: TagPattern, options: OutputOptions? = nil) {
+
+    public init(makeOutput: @escaping (_ logStore: LogStore) -> Output) {
+        self.makeOutputBlock = makeOutput
+    }
+
+    public init<O: InstantiatableOutput>(_ output: O.Type, tagPattern: TagPattern) {
         makeOutputBlock = { logStore in
-            return O(logStore: logStore, tagPattern: tagPattern, options: options)
+            return O(logStore: logStore, tagPattern: tagPattern)
         }
     }
 
@@ -31,7 +34,7 @@ public protocol Output {
 }
 
 public protocol InstantiatableOutput: Output {
-    init(logStore: LogStore, tagPattern: TagPattern, options: OutputOptions?)
+    init(logStore: LogStore, tagPattern: TagPattern)
 }
 
 public extension Output {
