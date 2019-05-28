@@ -22,7 +22,7 @@ struct PVLogFilter: Filter {
     }
 }
 
-struct PVLogOutput: Output {
+struct PVLogOutput: InstantiatableOutput {
     let tagPattern: TagPattern
 
     init(logStore: LogStore, tagPattern: TagPattern, options: OutputOptions?) {
