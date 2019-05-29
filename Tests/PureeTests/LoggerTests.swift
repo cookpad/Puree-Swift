@@ -5,7 +5,7 @@ import Puree
 let buffer = TestingBuffer()
 
 struct PVLogFilter: Filter {
-    init(tagPattern: TagPattern, options: FilterOptions?) {
+    init(tagPattern: TagPattern, options: [String: Any]? = nil) {
         self.tagPattern = tagPattern
     }
 
@@ -41,7 +41,9 @@ class LoggerTests: XCTestCase {
         let configuration = Logger.Configuration(logStore: logStore,
                                                  dateProvider: DefaultDateProvider(),
                                                  filterSettings: [
-                                                    FilterSetting(PVLogFilter.self, tagPattern: TagPattern(string: "pv")!),
+                                                    FilterSetting {
+                                                        PVLogFilter(tagPattern: TagPattern(string: "pv")!)
+                                                    },
             ],
                                                  outputSettings: [
                                                     OutputSetting {
@@ -66,9 +68,15 @@ class LoggerTests: XCTestCase {
         let configuration = Logger.Configuration(logStore: logStore,
                                                  dateProvider: DefaultDateProvider(),
                                                  filterSettings: [
-                                                    FilterSetting(PVLogFilter.self, tagPattern: TagPattern(string: "pv")!),
-                                                    FilterSetting(PVLogFilter.self, tagPattern: TagPattern(string: "pv2")!),
-                                                    FilterSetting(PVLogFilter.self, tagPattern: TagPattern(string: "pv.*")!),
+                                                    FilterSetting {
+                                                        PVLogFilter(tagPattern: TagPattern(string: "pv")!)
+                                                    },
+                                                    FilterSetting {
+                                                        PVLogFilter(tagPattern: TagPattern(string: "pv2")!)
+                                                    },
+                                                    FilterSetting{
+                                                        PVLogFilter(tagPattern: TagPattern(string: "pv.*")!)
+                                                    },
             ],
                                                  outputSettings: [
                                                     OutputSetting {
@@ -120,9 +128,13 @@ class LoggerTests: XCTestCase {
         let configuration = Logger.Configuration(logStore: logStore,
                                                  dateProvider: DefaultDateProvider(),
                                                  filterSettings: [
-                                                    FilterSetting(PVLogFilter.self, tagPattern: TagPattern(string: "pv")!),
+                                                    FilterSetting{
+                                                        PVLogFilter(tagPattern: TagPattern(string: "pv")!)
+                                                    },
                                                     CustomFilterSetting(tableName: "pv_log"),
-                                                    FilterSetting(PVLogFilter.self, tagPattern: TagPattern(string: "pv.*")!),
+                                                    FilterSetting{
+                                                        PVLogFilter(tagPattern: TagPattern(string: "pv.*")!)
+                                                    },
             ],
                                                  outputSettings: [
                                                     OutputSetting {
@@ -148,8 +160,10 @@ class LoggerTests: XCTestCase {
         let configuration = Logger.Configuration(logStore: logStore,
                                                  dateProvider: DefaultDateProvider(),
                                                  filterSettings: [
-                                                    FilterSetting(PVLogFilter.self, tagPattern: TagPattern(string: "pv")!),
-                                                    ],
+                                                    FilterSetting {
+                                                        PVLogFilter(tagPattern: TagPattern(string: "pv")!)
+                                                    },
+            ],
                                                  outputSettings: [
                                                     OutputSetting {
                                                         PVLogOutput(logStore: $0, tagPattern: TagPattern(string: "pv")!)

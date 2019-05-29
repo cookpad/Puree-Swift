@@ -1,15 +1,18 @@
 import Foundation
 
-public typealias FilterOptions = [String: Any]
-
 public protocol FilterSettingProtocol {
     func makeFilter() throws -> Filter
 }
 
 public struct FilterSetting: FilterSettingProtocol {
-    public init<F: Filter>(_ filter: F.Type, tagPattern: TagPattern, options: FilterOptions? = nil) {
+
+    public init(makeFiilter: @escaping () -> Filter) {
+        self.makeFilterBlock = makeFiilter
+    }
+
+    public init<F: InstantiatableFilter>(_ filter: F.Type, tagPattern: TagPattern) {
         makeFilterBlock = {
-            return F(tagPattern: tagPattern, options: options)
+            return F(tagPattern: tagPattern)
         }
     }
 
@@ -24,6 +27,8 @@ public protocol Filter {
     var tagPattern: TagPattern { get }
 
     func convertToLogs(_ payload: [String: Any]?, tag: String, captured: String?, logger: Logger) -> Set<LogEntry>
+}
 
-    init(tagPattern: TagPattern, options: FilterOptions?)
+public protocol InstantiatableFilter: Filter {
+    init(tagPattern: TagPattern)
 }
