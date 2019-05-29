@@ -55,7 +55,7 @@ import Puree
 struct PVLogFilter: Filter {
     let tagPattern: TagPattern
 
-    init(tagPattern: TagPattern, options: FilterOptions?) {
+    init(tagPattern: TagPattern) {
         self.tagPattern = tagPattern
     }
 
@@ -86,7 +86,7 @@ The following `ConsoleOutput` will output logs to the standard output.
 class ConsoleOutput: Output {
     let tagPattern: TagPattern
 
-    required init(logStore: LogStore, tagPattern: TagPattern, options: OutputOptions?) {
+    required init(logStore: LogStore, tagPattern: TagPattern) {
         self.tagPattern = tagPattern
     }
 
@@ -128,16 +128,20 @@ After implementing filters and outputs, you can configure the routing with `Logg
 import Puree
 
 let configuration = Logger.Configuration(filterSettings: [
-                                             FilterSetting(PVLogFilter.self,
-                                                           tagPattern: TagPattern(string: "pv.**")!),
+                                             FilterSetting{
+                                                 PVLogFilter(tagPattern: TagPattern(string: "pv.**")!)
+                                             }
                                          ],
                                          outputSettings: [
-                                             OutputSetting(ConsoleOutput.self,
-                                                           tagPattern: TagPattern(string: "activity.**")!),
-                                             OutputSetting(ConsoleOutput.self,
-                                                           tagPattern: TagPattern(string: "pv.**")!),
-                                             OutputSetting(LogServerOutput.self,
-                                                           tagPattern: TagPattern(string: "pv.**")!),
+                                             OutputSetting {
+                                                 PVLogOutput(logStore: $0, tagPattern: TagPattern(string: "activity.**")!)
+                                             },
+                                             OutputSetting {
+                                                 ConsoleOutput(logStore: $0, tagPattern: TagPattern(string: "pv.**")!)
+                                             },
+                                             OutputSetting {
+                                                 LogServerOutput(logStore: $0, tagPattern: TagPattern(string: "pv.**")!)
+                                             },
                                          ])
 let logger = try! Logger(configuration: configuration)
 logger.postLog(["page_name": "top", "user_id": 100], tag: "pv.top")
