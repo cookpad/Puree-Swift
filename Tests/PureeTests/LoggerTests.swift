@@ -74,7 +74,7 @@ class LoggerTests: XCTestCase {
                                                     FilterSetting {
                                                         PVLogFilter(tagPattern: TagPattern(string: "pv2")!)
                                                     },
-                                                    FilterSetting{
+                                                    FilterSetting {
                                                         PVLogFilter(tagPattern: TagPattern(string: "pv.*")!)
                                                     },
             ],
@@ -128,11 +128,11 @@ class LoggerTests: XCTestCase {
         let configuration = Logger.Configuration(logStore: logStore,
                                                  dateProvider: DefaultDateProvider(),
                                                  filterSettings: [
-                                                    FilterSetting{
+                                                    FilterSetting {
                                                         PVLogFilter(tagPattern: TagPattern(string: "pv")!)
                                                     },
                                                     CustomFilterSetting(tableName: "pv_log"),
-                                                    FilterSetting{
+                                                    FilterSetting {
                                                         PVLogFilter(tagPattern: TagPattern(string: "pv.*")!)
                                                     },
             ],

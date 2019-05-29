@@ -128,7 +128,7 @@ After implementing filters and outputs, you can configure the routing with `Logg
 import Puree
 
 let configuration = Logger.Configuration(filterSettings: [
-                                             FilterSetting{
+                                             FilterSetting {
                                                  PVLogFilter(tagPattern: TagPattern(string: "pv.**")!)
                                              }
                                          ],
