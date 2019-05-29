@@ -16,6 +16,11 @@ public struct OutputSetting: OutputSettingProtocol {
         }
     }
 
+    @available(*, unavailable, message: "Please conform InstantiatableOutput or use init with closure.")
+    public init<O: Output>(_ output: O.Type, tagPattern: TagPattern, options: [String: Any]? = nil) {
+        fatalError("unavailable")
+    }
+
     public func makeOutput(_ logStore: LogStore) -> Output {
         return makeOutputBlock(logStore)
     }

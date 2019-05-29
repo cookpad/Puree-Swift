@@ -16,6 +16,11 @@ public struct FilterSetting: FilterSettingProtocol {
         }
     }
 
+    @available(*, unavailable, message: "Please conform InstantiatableFilter or use init with closure.")
+    public init<F: Filter>(_ filter: F.Type, tagPattern: TagPattern, options: [String: Any]? = nil) {
+        fatalError("unavailable")
+    }
+
     public func makeFilter() throws -> Filter {
         return makeFilterBlock()
     }
