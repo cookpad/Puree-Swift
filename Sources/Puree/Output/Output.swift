@@ -10,14 +10,14 @@ public struct OutputSetting: OutputSettingProtocol {
         self.makeOutputBlock = makeOutput
     }
 
-    public init<O: InstantiatableOutput>(_ output: O.Type, tagPattern: TagPattern) {
+    public init<O: InstantiatableOutput>(_ output: O.Type, tagPattern: TagPattern, options: OutputOptions? = nil) {
         makeOutputBlock = { logStore in
-            return O(logStore: logStore, tagPattern: tagPattern)
+            return O(logStore: logStore, tagPattern: tagPattern, options: options)
         }
     }
 
     @available(*, unavailable, message: "Please conform InstantiatableOutput or use init with closure.")
-    public init<O: Output>(_ output: O.Type, tagPattern: TagPattern, options: [String: Any]? = nil) {
+    public init<O: Output>(_ output: O.Type, tagPattern: TagPattern, options: OutputOptions? = nil) {
         fatalError("unavailable")
     }
 
@@ -38,8 +38,10 @@ public protocol Output {
 
 }
 
+public typealias OutputOptions = [String: Any]
+
 public protocol InstantiatableOutput: Output {
-    init(logStore: LogStore, tagPattern: TagPattern)
+    init(logStore: LogStore, tagPattern: TagPattern, options: OutputOptions?)
 }
 
 public extension Output {

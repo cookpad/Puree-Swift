@@ -10,14 +10,14 @@ public struct FilterSetting: FilterSettingProtocol {
         self.makeFilterBlock = makeFiilter
     }
 
-    public init<F: InstantiatableFilter>(_ filter: F.Type, tagPattern: TagPattern) {
+    public init<F: InstantiatableFilter>(_ filter: F.Type, tagPattern: TagPattern, options: FilterOptions? = nil) {
         makeFilterBlock = {
-            return F(tagPattern: tagPattern)
+            return F(tagPattern: tagPattern, options: options)
         }
     }
 
     @available(*, unavailable, message: "Please conform InstantiatableFilter or use init with closure.")
-    public init<F: Filter>(_ filter: F.Type, tagPattern: TagPattern, options: [String: Any]? = nil) {
+    public init<F: Filter>(_ filter: F.Type, tagPattern: TagPattern, options: FilterOptions? = nil) {
         fatalError("unavailable")
     }
 
@@ -34,6 +34,8 @@ public protocol Filter {
     func convertToLogs(_ payload: [String: Any]?, tag: String, captured: String?, logger: Logger) -> Set<LogEntry>
 }
 
+public typealias FilterOptions = [String: Any]
+
 public protocol InstantiatableFilter: Filter {
-    init(tagPattern: TagPattern)
+    init(tagPattern: TagPattern, options: FilterOptions?)
 }
