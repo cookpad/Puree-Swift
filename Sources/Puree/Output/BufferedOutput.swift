@@ -4,10 +4,9 @@ open class BufferedOutput: Output {
     private let dateProvider: DateProvider = DefaultDateProvider()
     internal let readWriteQueue = DispatchQueue(label: "com.cookpad.Puree.Logger.BufferedOutput", qos: .background)
 
-    public required init(logStore: LogStore, tagPattern: TagPattern, options: OutputOptions?) {
+    public init(logStore: LogStore, tagPattern: TagPattern) {
         self.logStore = logStore
         self.tagPattern = tagPattern
-        self.options = options
     }
 
     public struct Chunk: Hashable {
@@ -39,7 +38,6 @@ open class BufferedOutput: Output {
     }
 
     public let tagPattern: TagPattern
-    public let options: OutputOptions?
     private let logStore: LogStore
     public var configuration: Configuration = .default
 

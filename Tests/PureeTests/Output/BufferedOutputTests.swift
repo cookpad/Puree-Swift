@@ -34,7 +34,7 @@ class BufferedOutputTests: XCTestCase {
     let logStore = InMemoryLogStore()
 
     override func setUp() {
-        output = TestingBufferedOutput(logStore: logStore, tagPattern: TagPattern(string: "pv")!, options: nil)
+        output = TestingBufferedOutput(logStore: logStore, tagPattern: TagPattern(string: "pv")!)
         output.configuration.flushInterval = TimeInterval.infinity
         output.start()
     }
@@ -202,7 +202,7 @@ class BufferedOutputAsyncTests: XCTestCase {
     let logStore = InMemoryLogStore()
 
     override func setUp() {
-        output = TestingBufferedOutputAsync(logStore: logStore, tagPattern: TagPattern(string: "pv")!, options: nil)
+        output = TestingBufferedOutputAsync(logStore: logStore, tagPattern: TagPattern(string: "pv")!)
         output.configuration.flushInterval = TimeInterval.infinity
         output.start()
     }
@@ -387,7 +387,7 @@ class BufferedOutputDispatchQueueTests: XCTestCase {
 
         dispatchQueue.async {
             let logStore = InMemoryLogStore()
-            let output = TestingBufferedOutput(logStore: logStore, tagPattern: TagPattern(string: "pv")!, options: nil)
+            let output = TestingBufferedOutput(logStore: logStore, tagPattern: TagPattern(string: "pv")!)
             output.configuration = BufferedOutput.Configuration(logEntryCountLimit: 5, flushInterval: 0, retryLimit: 3)
             output.start()
 
