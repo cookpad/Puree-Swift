@@ -7,14 +7,14 @@ private func makeLog() -> LogEntry {
 }
 
 class TestingBufferedOutput: BufferedOutput {
-    var shouldSuccess: Bool = true
+    var writeResult: WriteResult = .success
     fileprivate(set) var calledWriteCount: Int = 0
     var writeCallback: (() -> Void)?
     var waitUntilCurrentCompletionBlock: (() -> Void)?
 
-    override func write(_ chunk: BufferedOutput.Chunk, completion: @escaping (Bool) -> Void) {
+    override func write(_ chunk: BufferedOutput.Chunk, completion: @escaping (WriteResult) -> Void) {
         calledWriteCount += 1
-        completion(shouldSuccess)
+        completion(writeResult)
         writeCallback?()
     }
 
@@ -108,7 +108,7 @@ class BufferedOutputTests: XCTestCase {
     }
 
     func testRetryWhenFailed() {
-        output.shouldSuccess = false
+        output.writeResult = .failureRetryable
         output.configuration.logEntryCountLimit = 10
         output.configuration.retryLimit = 3
         XCTAssertEqual(output.calledWriteCount, 0)
@@ -187,11 +187,11 @@ class TestingBufferedOutputAsync: TestingBufferedOutput {
         return "pv_TestingBufferedOutput"
     }
 
-    override func write(_ chunk: BufferedOutput.Chunk, completion: @escaping (Bool) -> Void) {
+    override func write(_ chunk: BufferedOutput.Chunk, completion: @escaping (WriteResult) -> Void) {
         calledWriteCount += 1
         DispatchQueue.global().async {
             Thread.sleep(forTimeInterval: 0.1)
-            completion(self.shouldSuccess)
+            completion(self.writeResult)
             self.writeCallback?()
         }
     }
@@ -284,7 +284,7 @@ class BufferedOutputAsyncTests: XCTestCase {
     }
 
     func testRetryWhenFailed() {
-        output.shouldSuccess = false
+        output.writeResult = .failureRetryable
         output.configuration.logEntryCountLimit = 10
         output.configuration.retryLimit = 3
 

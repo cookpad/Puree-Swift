@@ -1,6 +1,17 @@
 import Foundation
 
 open class BufferedOutput: Output {
+
+    public enum WriteResult {
+        case success
+        /// Schedule retries based on the delay function
+        case failureRetryable
+        /// Schedule retries based on the delay function, but only after the next time this output is resumed.
+        case failureRetryAfterNextResume
+        /// Permanent failure, no need to retry.
+        case failureNonRetryable
+    }
+
     private let dateProvider: DateProvider = DefaultDateProvider()
     internal let readWriteQueue = DispatchQueue(label: "com.cookpad.Puree.Logger.BufferedOutput", qos: .background)
 
@@ -95,8 +106,8 @@ open class BufferedOutput: Output {
         }
     }
 
-    open func write(_ chunk: Chunk, completion: @escaping (Bool) -> Void) {
-        completion(false)
+    open func write(_ chunk: Chunk, completion: @escaping (WriteResult) -> Void) {
+        completion(.success)
     }
 
     open var storageGroup: String {
@@ -172,22 +183,28 @@ open class BufferedOutput: Output {
         dispatchPrecondition(condition: .onQueue(readWriteQueue))
 
         currentWritingChunks.insert(chunk)
-        write(chunk) { success in
-            if success {
+
+        write(chunk) { result in
+            switch result {
+            case .success, .failureNonRetryable:
                 self.readWriteQueue.async {
                     self.currentWritingChunks.remove(chunk)
                     self.logStore.remove(chunk.logs, from: self.storageGroup, completion: nil)
                 }
-                return
-            }
+            case .failureRetryable:
+                var chunk = chunk
+                chunk.incrementRetryCount()
 
-            var chunk = chunk
-            chunk.incrementRetryCount()
-
-            if chunk.retryCount <= self.retryLimit {
-                let delay: TimeInterval = self.delay(try: chunk.retryCount)
-                self.readWriteQueue.asyncAfter(deadline: .now() + delay) {
-                    self.callWriteChunk(chunk)
+                if chunk.retryCount <= self.retryLimit {
+                    let delay: TimeInterval = self.delay(try: chunk.retryCount)
+                    self.readWriteQueue.asyncAfter(deadline: .now() + delay) {
+                        self.callWriteChunk(chunk)
+                    }
+                }
+            case .failureRetryAfterNextResume:
+                // Since the chunk is still in the log store, it'll be re-flushed after the next resume.
+                self.readWriteQueue.async {
+                    self.currentWritingChunks.remove(chunk)
                 }
             }
         }
