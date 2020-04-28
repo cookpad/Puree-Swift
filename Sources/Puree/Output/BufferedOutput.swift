@@ -1,10 +1,10 @@
 import Foundation
 
-open class BufferedOutput: Output {
+open class BufferedOutput: InstantiatableOutput {
     private let dateProvider: DateProvider = DefaultDateProvider()
     internal let readWriteQueue = DispatchQueue(label: "com.cookpad.Puree.Logger.BufferedOutput", qos: .background)
 
-    public init(logStore: LogStore, tagPattern: TagPattern) {
+    required public init(logStore: LogStore, tagPattern: TagPattern, options: OutputOptions? = nil) {
         self.logStore = logStore
         self.tagPattern = tagPattern
     }
