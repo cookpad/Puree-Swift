@@ -57,7 +57,7 @@ class LoggerTests: XCTestCase {
         XCTAssertEqual(buffer.logs(for: "pv").count, 1)
 
         let log = buffer.logs(for: "pv").first!
-        guard let userInfo = try? JSONSerialization.jsonObject(with: log.userData!, options: []) as! [String: Any] else {
+        guard let userInfo = try? (JSONSerialization.jsonObject(with: log.userData!, options: []) as! [String: Any]) else {
             return XCTFail("userInfo could not decoded")
         }
         XCTAssertEqual(userInfo["page_name"] as! String, "Top")
@@ -191,7 +191,7 @@ class LoggerTests: XCTestCase {
 
         for index in testIndices {
             let found = logs.contains { log -> Bool in
-                guard let userInfo = try? JSONSerialization.jsonObject(with: log.userData!, options: []) as! [String: Any] else {
+                guard let userInfo = try? JSONSerialization.jsonObject(with: log.userData!, options: []) as? [String: Any] else {
                     XCTFail("userInfo could not decoded")
                     return false
                 }
