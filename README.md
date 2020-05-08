@@ -2,7 +2,7 @@
 
 ![](Documentation/logo.png)
 
-[![Build Status](https://travis-ci.org/cookpad/Puree-Swift.svg?branch=master)](https://travis-ci.org/cookpad/Puree-Swift)
+[![Build Status](https://github.com/cookpad/Puree-Swift/workflows/Puree/badge.svg)](https://github.com/cookpad/Puree-Swift/actions)
 [![Language](https://img.shields.io/badge/language-Swift%205.0-orange.svg)](https://swift.org)
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage) 
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/Puree.svg)](http://cocoadocs.org/docsets/Puree)

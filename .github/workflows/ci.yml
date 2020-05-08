@@ -1,5 +1,5 @@
 name: Puree
-on: [push, pull_request]
+on: [push]
 jobs:
   iOS:
     runs-on: macos
