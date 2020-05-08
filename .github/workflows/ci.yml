@@ -5,10 +5,16 @@ jobs:
     runs-on: macos
     steps:
     - uses: actions/checkout@v2
-    - name: Run Tests
+    - name: Run Tests with Xcode
       run: |
         DESTINATION="platform=iOS Simulator,name=iPhone 8" SCHEME="Puree"
         xcodebuild test -project Puree.xcodeproj -scheme "${SCHEME}" -destination "${DESTINATION}"
+  spm:
+    runs-on: macos
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run Tests with Swift Package Manager
+      run: swift test
   Lint:
     runs-on: macos
     steps:
