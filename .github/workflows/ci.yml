@@ -9,7 +9,7 @@ jobs:
       run: |
         DESTINATION="platform=iOS Simulator,name=iPhone 8" SCHEME="Puree"
         xcodebuild test -project Puree.xcodeproj -scheme "${SCHEME}" -destination "${DESTINATION}"
-  spm:
+  SwiftPM:
     runs-on: macos
     steps:
     - uses: actions/checkout@v2
