@@ -1,0 +1,24 @@
+name: Puree
+on: [push]
+jobs:
+  iOS:
+    runs-on: macos
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run Tests
+      run: |
+        DESTINATION="platform=iOS Simulator,name=iPhone 8" SCHEME="Puree"
+        xcodebuild test -project Puree.xcodeproj -scheme "${SCHEME}" -destination "${DESTINATION}"
+  Lint:
+    runs-on: macos
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install Dependencies
+      run: |
+        gem install cocoapods
+        pod repo update
+        brew install swiftlint
+    - name: SwiftLint
+      run: swiftlint --strict
+    - name: CocoaPods
+      run: pod lib lint --allow-warnings
