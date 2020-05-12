@@ -14,7 +14,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Run Tests with Swift Package Manager
-      run: swift test
+      run: swift test -Xswiftc "-target" -Xswiftc "x86_64-apple-macosx10.12"
   Lint:
     runs-on: macos
     steps:
