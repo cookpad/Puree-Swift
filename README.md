@@ -46,7 +46,7 @@ The [Swift Package Manager](https://swift.org/package-manager/) is a tool for au
 Once you have your Swift package set up, adding Puree-Swift as a dependency is as easy as adding it to the `dependencies` value of your `Package.swift`.
 ```swift
 dependencies: [
-    .package(url: "https://github.com/cookpad/Puree-Swift.git", from: "5.1.0")
+    .package(url: "https://github.com/cookpad/Puree-Swift.git", .upToNextMinor(from: "5.1.0"))
 ]
 ```
 
