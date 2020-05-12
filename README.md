@@ -40,6 +40,16 @@ use_frameworks!
 pod 'Puree', '~> 5.0'
 ```
 
+### Swift PM
+The [Swift Package Manager](https://swift.org/package-manager/) is a tool for automating the distribution of Swift code and is integrated into the `swift` compiler. It is in early development, but Puree-Swift does support its use on supported platforms.
+
+Once you have your Swift package set up, adding Puree-Swift as a dependency is as easy as adding it to the `dependencies` value of your `Package.swift`.
+```swift
+dependencies: [
+    .package(url: "https://github.com/cookpad/Puree-Swift.git", .upToNextMinor(from: "5.1.0"))
+]
+```
+
 ## Usage
 
 ### Define your own Filter/Output

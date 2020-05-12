@@ -1,14 +1,20 @@
 name: Puree
-on: [push]
+on: [push, pull_request]
 jobs:
   iOS:
     runs-on: macos
     steps:
     - uses: actions/checkout@v2
-    - name: Run Tests
+    - name: Run Tests with Xcode
       run: |
         DESTINATION="platform=iOS Simulator,name=iPhone 8" SCHEME="Puree"
         xcodebuild test -project Puree.xcodeproj -scheme "${SCHEME}" -destination "${DESTINATION}"
+  SwiftPM:
+    runs-on: macos
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run Tests with Swift Package Manager
+      run: swift test -Xswiftc "-target" -Xswiftc "x86_64-apple-macosx10.12"
   Lint:
     runs-on: macos
     steps:
