@@ -4,13 +4,12 @@ import Puree
 
 class FileLogStoreTests: XCTestCase {
     var logStore: LogStore {
-        return FileLogStore.default
+        return try! FileLogStore()
     }
 
     override func setUp() {
         super.setUp()
 
-        try! logStore.prepare()
         logStore.flush()
     }
 

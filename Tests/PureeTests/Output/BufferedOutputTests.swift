@@ -31,7 +31,7 @@ class TestingBufferedOutput: BufferedOutput {
 
 class BufferedOutputTests: XCTestCase {
     var output: TestingBufferedOutput!
-    let logStore = InMemoryLogStore()
+    let logStore = { try! InMemoryLogStore() }()
 
     override func setUp() {
         output = TestingBufferedOutput(logStore: logStore, tagPattern: TagPattern(string: "pv")!)
@@ -199,7 +199,7 @@ class TestingBufferedOutputAsync: TestingBufferedOutput {
 
 class BufferedOutputAsyncTests: XCTestCase {
     var output: TestingBufferedOutputAsync!
-    let logStore = InMemoryLogStore()
+    let logStore = { try! InMemoryLogStore() }()
 
     override func setUp() {
         output = TestingBufferedOutputAsync(logStore: logStore, tagPattern: TagPattern(string: "pv")!)
@@ -381,12 +381,12 @@ class BufferedOutputAsyncTests: XCTestCase {
 
 class BufferedOutputDispatchQueueTests: XCTestCase {
 
-    func testFlushIntervalOnDifferentDispatchQueue() {
+    func testFlushIntervalOnDifferentDispatchQueue() throws {
         let exp = expectation(description: #function)
         let dispatchQueue = DispatchQueue(label: "com.cookpad.Puree.Logger", qos: .background)
+        let logStore = try XCTUnwrap(InMemoryLogStore())
 
         dispatchQueue.async {
-            let logStore = InMemoryLogStore()
             let output = TestingBufferedOutput(logStore: logStore, tagPattern: TagPattern(string: "pv")!)
             output.configuration = BufferedOutput.Configuration(logEntryCountLimit: 5, flushInterval: 0, retryLimit: 3)
             output.start()

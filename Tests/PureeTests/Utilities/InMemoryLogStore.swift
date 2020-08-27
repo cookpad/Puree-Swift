@@ -4,7 +4,7 @@ import Puree
 class InMemoryLogStore: LogStore {
     private var buffer: [String: Set<LogEntry>] = [:]
 
-    func prepare() throws {
+    required init() throws {
     }
 
     func logs(for group: String) -> Set<LogEntry> {

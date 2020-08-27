@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol LogStore {
-    func prepare() throws
+    init() throws
     func retrieveLogs(of group: String, completion: (Set<LogEntry>) -> Void)
     func add(_ log: LogEntry, for group: String, completion: (() -> Void)?)
     func add(_ logs: Set<LogEntry>, for group: String, completion: (() -> Void)?)

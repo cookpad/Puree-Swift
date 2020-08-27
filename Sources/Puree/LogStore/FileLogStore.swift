@@ -51,9 +51,13 @@ struct SystemFileManager: FileManagerProtocol {
 public class FileLogStore: LogStore {
     private static let directoryName = "PureeLogs"
     private var bundle: Bundle = Bundle.main
-    private var baseDirectoryURL: URL!
+    private var baseDirectoryURL: URL
 
-    public static let `default` = FileLogStore()
+    public required  init() throws {
+        let cacheDirectoryURL = try fileManager.cachesDirectoryURL()
+        baseDirectoryURL = cacheDirectoryURL.appendingPathComponent(FileLogStore.directoryName)
+        try createCachesDirectory()
+    }
 
     private func fileURL(for group: String) -> URL {
         // Tag patterns usually contain '*'. However we don't want to use special characters in filenames
@@ -81,12 +85,6 @@ public class FileLogStore: LogStore {
 
     private func createCachesDirectory() throws {
         try fileManager.createEmptyDirectoryIfNeeded(at: baseDirectoryURL)
-    }
-
-    public func prepare() throws {
-        let cacheDirectoryURL = try fileManager.cachesDirectoryURL()
-        baseDirectoryURL = cacheDirectoryURL.appendingPathComponent(FileLogStore.directoryName)
-        try createCachesDirectory()
     }
 
     public func add(_ logs: Set<LogEntry>, for group: String, completion: (() -> Void)?) {

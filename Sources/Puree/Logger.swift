@@ -2,16 +2,16 @@ import Foundation
 
 public final class Logger {
     public struct Configuration {
-        public var logStore: LogStore
+        public var logStoreType: LogStore.Type
         public var dateProvider: DateProvider = DefaultDateProvider()
         public var filterSettings: [FilterSettingProtocol] = []
         public var outputSettings: [OutputSettingProtocol] = []
 
-        public init(logStore: LogStore = FileLogStore.default,
+        public init(logStore: LogStore.Type,
                     dateProvider: DateProvider = DefaultDateProvider(),
                     filterSettings: [FilterSettingProtocol],
                     outputSettings: [OutputSettingProtocol]) {
-            self.logStore = logStore
+            self.logStoreType = logStore
             self.dateProvider = dateProvider
             self.filterSettings = filterSettings
             self.outputSettings = outputSettings
@@ -20,6 +20,7 @@ public final class Logger {
 
     private let configuration: Configuration
     private let dispatchQueue = DispatchQueue(label: "com.cookpad.Puree.Logger", qos: .background)
+    private let logStore: LogStore
     private(set) var filters: [Filter] = []
     private(set) var outputs: [Output] = []
 
@@ -30,7 +31,7 @@ public final class Logger {
     public init(configuration: Configuration) throws {
         self.configuration = configuration
 
-        try configuration.logStore.prepare()
+        logStore = try configuration.logStoreType.init()
         try configureFilterPlugins()
         try configureOutputPlugins()
 
@@ -42,7 +43,7 @@ public final class Logger {
     }
 
     private func configureOutputPlugins() throws {
-        outputs = try configuration.outputSettings.map { try $0.makeOutput(configuration.logStore) }
+        outputs = try configuration.outputSettings.map { try $0.makeOutput(logStore) }
     }
 
     public func postLog(_ payload: [String: Any]?, tag: String) {
