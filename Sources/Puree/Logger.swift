@@ -7,11 +7,11 @@ public final class Logger {
         public var filterSettings: [FilterSettingProtocol] = []
         public var outputSettings: [OutputSettingProtocol] = []
 
-        public init(logStore: LogStore.Type,
+        public init(logStoreType: LogStore.Type,
                     dateProvider: DateProvider = DefaultDateProvider(),
                     filterSettings: [FilterSettingProtocol],
                     outputSettings: [OutputSettingProtocol]) {
-            self.logStoreType = logStore
+            self.logStoreType = logStoreType
             self.dateProvider = dateProvider
             self.filterSettings = filterSettings
             self.outputSettings = outputSettings

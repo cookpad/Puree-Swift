@@ -38,7 +38,7 @@ class LoggerTests: XCTestCase {
     let logStore: InMemoryLogStore = { try! InMemoryLogStore() }()
 
     func testLoggerWithSingleTag() {
-        let configuration = Logger.Configuration(logStore: InMemoryLogStore.self,
+        let configuration = Logger.Configuration(logStoreType: InMemoryLogStore.self,
                                                  dateProvider: DefaultDateProvider(),
                                                  filterSettings: [
                                                     FilterSetting {
@@ -65,7 +65,7 @@ class LoggerTests: XCTestCase {
     }
 
     func testLoggerWithMultipleTag() {
-        let configuration = Logger.Configuration(logStore: InMemoryLogStore.self,
+        let configuration = Logger.Configuration(logStoreType: InMemoryLogStore.self,
                                                  dateProvider: DefaultDateProvider(),
                                                  filterSettings: [
                                                     FilterSetting {
@@ -125,7 +125,7 @@ class LoggerTests: XCTestCase {
             }
         }
 
-        let configuration = Logger.Configuration(logStore: InMemoryLogStore.self,
+        let configuration = Logger.Configuration(logStoreType: InMemoryLogStore.self,
                                                  dateProvider: DefaultDateProvider(),
                                                  filterSettings: [
                                                     FilterSetting {
@@ -157,7 +157,7 @@ class LoggerTests: XCTestCase {
     }
 
     func testLoggerWithMultiThread() {
-        let configuration = Logger.Configuration(logStore: InMemoryLogStore.self,
+        let configuration = Logger.Configuration(logStoreType: InMemoryLogStore.self,
                                                  dateProvider: DefaultDateProvider(),
                                                  filterSettings: [
                                                     FilterSetting {
