@@ -54,7 +54,7 @@ public class FileLogStore: LogStore {
     private var baseDirectoryURL: URL?
 
     public enum Error: Swift.Error {
-        case unknownBaseDirectory
+        case unknownBaseDirectoryUnavailable
     }
 
     public static let `default` = FileLogStore()
@@ -84,7 +84,7 @@ public class FileLogStore: LogStore {
     }
 
     private func createCachesDirectory() throws {
-        guard let baseDirectoryURL = self.baseDirectoryURL else { throw Error.unknownBaseDirectory }
+        guard let baseDirectoryURL = self.baseDirectoryURL else { throw Error.unknownBaseDirectoryUnavailable }
         try fileManager.createEmptyDirectoryIfNeeded(at: baseDirectoryURL)
     }
 
