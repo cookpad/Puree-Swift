@@ -51,19 +51,23 @@ struct SystemFileManager: FileManagerProtocol {
 public class FileLogStore: LogStore {
     private static let directoryName = "PureeLogs"
     private var bundle: Bundle = Bundle.main
-    private var baseDirectoryURL: URL!
+    private var baseDirectoryURL: URL?
+
+    public enum Error: Swift.Error {
+        case baseDirectoryUnavailable
+    }
 
     public static let `default` = FileLogStore()
 
-    private func fileURL(for group: String) -> URL {
+    private func fileURL(for group: String) -> URL? {
         // Tag patterns usually contain '*'. However we don't want to use special characters in filenames
         // so encode file names to Base16
-        return baseDirectoryURL.appendingPathComponent(encodeToBase16(group))
+        return baseDirectoryURL?.appendingPathComponent(encodeToBase16(group))
     }
     private var fileManager: FileManagerProtocol = SystemFileManager()
 
     private func storedLogs(of group: String) -> Set<LogEntry> {
-        if let data = fileManager.load(from: fileURL(for: group)) {
+        if let fileURL = fileURL(for: group), let data = fileManager.load(from: fileURL) {
             let decorder = PropertyListDecoder()
             if let logs = try? decorder.decode([LogEntry].self, from: data) {
                 return Set<LogEntry>(logs)
@@ -74,12 +78,13 @@ public class FileLogStore: LogStore {
 
     private func write(_ logs: Set<LogEntry>, for group: String) {
         let encoder = PropertyListEncoder()
-        if let data = try? encoder.encode(logs) {
-            try? fileManager.write(data, to: fileURL(for: group))
+        if let fileURL = fileURL(for: group), let data = try? encoder.encode(logs) {
+            try? fileManager.write(data, to: fileURL)
         }
     }
 
     private func createCachesDirectory() throws {
+        guard let baseDirectoryURL = self.baseDirectoryURL else { throw Error.baseDirectoryUnavailable }
         try fileManager.createEmptyDirectoryIfNeeded(at: baseDirectoryURL)
     }
 
@@ -107,7 +112,9 @@ public class FileLogStore: LogStore {
     }
 
     public func flush() {
-        try? fileManager.removeDirectory(at: baseDirectoryURL)
+        if let baseDirectoryURL = baseDirectoryURL {
+            try? fileManager.removeDirectory(at: baseDirectoryURL)
+        }
         try? createCachesDirectory()
     }
 
