@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "Puree"
-  s.version      = "5.1.2"
+  s.version      = "5.1.3"
   s.summary      = "Awesome log aggregator"
   s.homepage     = "https://github.com/cookpad/Puree-Swift"
   s.license      = { :type => "MIT", :file => "LICENSE" }
