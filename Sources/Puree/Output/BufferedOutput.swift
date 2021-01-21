@@ -160,8 +160,14 @@ open class BufferedOutput: InstantiatableOutput {
         let newBuffer = Set(buffer.dropFirst(logCount))
         let dropped = buffer.subtracting(newBuffer)
         buffer = newBuffer
-        let chunk = Chunk(logs: dropped)
-        callWriteChunk(chunk)
+        prepareChunk(logs: dropped)
+            .forEach { (chunk) in
+                callWriteChunk(chunk)
+            }
+    }
+
+    open func prepareChunk(logs: Set<LogEntry>) -> [Chunk] {
+        [ Chunk(logs: logs) ]
     }
 
     open func delay(try count: Int) -> TimeInterval {
