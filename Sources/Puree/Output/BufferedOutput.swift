@@ -167,7 +167,7 @@ open class BufferedOutput: InstantiatableOutput {
     }
 
     open func prepareChunk(logs: Set<LogEntry>) -> [Chunk] {
-        [ Chunk(logs: logs) ]
+        return [ Chunk(logs: logs) ]
     }
 
     open func delay(try count: Int) -> TimeInterval {
