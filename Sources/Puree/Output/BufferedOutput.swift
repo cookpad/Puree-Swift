@@ -13,7 +13,7 @@ open class BufferedOutput: InstantiatableOutput {
         public let logs: Set<LogEntry>
         private(set) var retryCount: Int = 0
 
-        public init(logs: Set<LogEntry>) {
+        fileprivate init(logs: Set<LogEntry>) {
             self.logs = logs
         }
 
