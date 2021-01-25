@@ -33,8 +33,9 @@ open class BufferedOutput: InstantiatableOutput {
         public var logEntryCountLimit: Int
         public var flushInterval: TimeInterval
         public var retryLimit: Int
+        public var logDataSizeLimit: Int?
 
-        public static let `default` = Configuration(logEntryCountLimit: 5, flushInterval: 10, retryLimit: 3)
+        public static let `default` = Configuration(logEntryCountLimit: 5, flushInterval: 10, retryLimit: 3, logDataSizeLimit: nil)
     }
 
     public let tagPattern: TagPattern
@@ -54,6 +55,10 @@ open class BufferedOutput: InstantiatableOutput {
 
     private var retryLimit: Int {
         return configuration.retryLimit
+    }
+
+    private var sizeLimit: Int? {
+        return configuration.logDataSizeLimit
     }
 
     private var currentDate: Date {
@@ -160,14 +165,24 @@ open class BufferedOutput: InstantiatableOutput {
         let newBuffer = Set(buffer.dropFirst(logCount))
         let dropped = buffer.subtracting(newBuffer)
         buffer = newBuffer
-        prepareChunk(logs: dropped)
-            .forEach { (chunk) in
-                callWriteChunk(chunk)
-            }
-    }
+        let logsToSend: Set<LogEntry>
+        if let logDataSizeLimit = configuration.logDataSizeLimit {
+            var logsUnderSizeLimit = Set<LogEntry>()
 
-    open func prepareChunk(logs: Set<LogEntry>) -> [Chunk] {
-        return [ Chunk(logs: logs) ]
+            var currentTotalLogSize = 0
+            for log in dropped {
+                if currentTotalLogSize + (log.userData?.count ?? 0) < logDataSizeLimit {
+                    logsUnderSizeLimit.insert(log)
+                    currentTotalLogSize += log.userData?.count ?? 0
+                } else {
+                    break
+                }
+            }
+            logsToSend = logsUnderSizeLimit
+        } else {
+            logsToSend = dropped
+        }
+        callWriteChunk(Chunk(logs: logsToSend))
     }
 
     open func delay(try count: Int) -> TimeInterval {
