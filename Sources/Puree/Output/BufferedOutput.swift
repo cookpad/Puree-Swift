@@ -96,6 +96,17 @@ open class BufferedOutput: InstantiatableOutput {
 
             if buffer.count >= logLimit {
                 flush()
+            } else if let logSizeLimit = configuration.logDataSizeLimit {
+                let currentBufferedLogSize = buffer.reduce(0, { (size, log) -> Int in
+                    size + (log.userData?.count ?? 0)
+                })
+
+                print("[hoge] count: \(buffer.count)")
+                print("[hoge] count: \(currentBufferedLogSize)")
+
+                if currentBufferedLogSize >= logSizeLimit {
+                    flush()
+                }
             }
         }
     }
@@ -175,6 +186,7 @@ open class BufferedOutput: InstantiatableOutput {
                     logsUnderSizeLimit.insert(log)
                     currentTotalLogSize += log.userData?.count ?? 0
                 } else {
+                    buffer = dropped.subtracting(logsUnderSizeLimit)
                     break
                 }
             }

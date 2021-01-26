@@ -107,6 +107,34 @@ class BufferedOutputTests: XCTestCase {
         XCTAssertEqual(logStore.logs(for: "pv").count, 0)
     }
 
+    func testHittingLogSizeLimit() {
+        output.configuration.logDataSizeLimit = 15
+        output.configuration.logEntryCountLimit = 2
+        XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 0)
+        XCTAssertEqual(output.calledWriteCount, 0)
+
+        var log1 = makeLog()
+        log1.userData = "0123456789".data(using: .utf8)
+
+        output.emit(log: log1)
+        XCTAssertEqual(output.calledWriteCount, 0)
+        XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 1)
+
+        var log2 = makeLog()
+        log2.userData = "0123456789".data(using: .utf8)
+
+        output.emit(log: log2)
+        output.waitUntilCurrentQueuedJobFinished()
+        XCTAssertEqual(output.calledWriteCount, 1)
+        XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 1)
+
+        var log3 = makeLog()
+        output.emit(log: log3)
+        output.waitUntilCurrentQueuedJobFinished()
+        XCTAssertEqual(output.calledWriteCount, 2)
+        XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 0)
+    }
+
     func testRetryWhenFailed() {
         output.shouldSuccess = false
         output.configuration.logEntryCountLimit = 10
