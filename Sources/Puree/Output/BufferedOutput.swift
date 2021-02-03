@@ -33,9 +33,9 @@ open class BufferedOutput: InstantiatableOutput {
         public var logEntryCountLimit: Int
         public var flushInterval: TimeInterval
         public var retryLimit: Int
-        public var logDataSizeLimit: Int?
+        public var chunkDataSizeLimit: Int?
 
-        public static let `default` = Configuration(logEntryCountLimit: 5, flushInterval: 10, retryLimit: 3, logDataSizeLimit: nil)
+        public static let `default` = Configuration(logEntryCountLimit: 5, flushInterval: 10, retryLimit: 3, chunkDataSizeLimit: nil)
     }
 
     public let tagPattern: TagPattern
@@ -58,7 +58,7 @@ open class BufferedOutput: InstantiatableOutput {
     }
 
     private var sizeLimit: Int? {
-        return configuration.logDataSizeLimit
+        return configuration.chunkDataSizeLimit
     }
 
     private var currentDate: Date {
@@ -96,7 +96,7 @@ open class BufferedOutput: InstantiatableOutput {
 
             if buffer.count >= logLimit {
                 flush()
-            } else if let logSizeLimit = configuration.logDataSizeLimit {
+            } else if let logSizeLimit = configuration.chunkDataSizeLimit {
                 let currentBufferedLogSize = buffer.reduce(0, { (size, log) -> Int in
                     size + (log.userData?.count ?? 0)
                 })
@@ -177,12 +177,12 @@ open class BufferedOutput: InstantiatableOutput {
         let dropped = buffer.subtracting(newBuffer)
         buffer = newBuffer
         let logsToSend: Set<LogEntry>
-        if let logDataSizeLimit = configuration.logDataSizeLimit {
+        if let chunkDataSizeLimit = configuration.chunkDataSizeLimit {
             var logsUnderSizeLimit = Set<LogEntry>()
 
             var currentTotalLogSize = 0
             for log in dropped {
-                if currentTotalLogSize + (log.userData?.count ?? 0) < logDataSizeLimit {
+                if currentTotalLogSize + (log.userData?.count ?? 0) < chunkDataSizeLimit {
                     logsUnderSizeLimit.insert(log)
                     currentTotalLogSize += log.userData?.count ?? 0
                 } else {
