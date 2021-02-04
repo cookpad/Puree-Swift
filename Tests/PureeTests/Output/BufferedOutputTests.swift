@@ -111,6 +111,7 @@ class BufferedOutputTests: XCTestCase {
         // Set maximum chunk size as 15bytes
         output.configuration.chunkDataSizeLimit = 15
 
+        // Disable to send according to log count
         output.configuration.logEntryCountLimit = .max
 
         XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 0)
@@ -125,7 +126,7 @@ class BufferedOutputTests: XCTestCase {
         XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 1)
 
         // Emit one more log entry whose size is 10bytes.
-        // Now `log1` and `log2` should be sent because
+        // Now `log1` should be sent and `log2` shoud not because reaching to size limit. `log2` should remain in the `logStore` .
         var log2 = makeLog()
         log2.userData = "0123456789".data(using: .utf8)
         output.emit(log: log2)
@@ -133,12 +134,14 @@ class BufferedOutputTests: XCTestCase {
         XCTAssertEqual(output.calledWriteCount, 1)
         XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 1)
 
+        // Emit one more log entry whose size is 3bytes.
+        // Now `log2` and `log3` should not be sent yet because total size has not reached the limit.
         var log3 = makeLog()
-        log3.userData = nil
+        log3.userData = "012".data(using: .utf8)
         output.emit(log: log3)
         output.waitUntilCurrentQueuedJobFinished()
-        XCTAssertEqual(output.calledWriteCount, 2)
-        XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 0)
+        XCTAssertEqual(output.calledWriteCount, 1)
+        XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 2)
     }
 
     func testRetryWhenFailed() {
