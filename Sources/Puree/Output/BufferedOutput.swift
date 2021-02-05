@@ -101,9 +101,6 @@ open class BufferedOutput: InstantiatableOutput {
                     size + (log.userData?.count ?? 0)
                 })
 
-                print("[hoge] count: \(buffer.count)")
-                print("[hoge] count: \(currentBufferedLogSize)")
-
                 if currentBufferedLogSize >= logSizeLimit {
                     flush()
                 }
