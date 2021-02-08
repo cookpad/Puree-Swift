@@ -91,6 +91,11 @@ open class BufferedOutput: InstantiatableOutput {
 
     public func emit(log: LogEntry) {
         readWriteQueue.sync {
+            if let logSizeLimit = configuration.chunkDataSizeLimit, (log.userData?.count ?? 0) > logSizeLimit {
+                // Data whose size is larger than limit will never be sent.
+                return
+            }
+
             buffer.insert(log)
             logStore.add(log, for: storageGroup, completion: nil)
 

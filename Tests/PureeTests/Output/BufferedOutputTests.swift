@@ -144,6 +144,21 @@ class BufferedOutputTests: XCTestCase {
         XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 2)
     }
 
+    func testEmittingOneLogLargerThanSizeLimit() {
+        // Set maximum chunk size as 5bytes
+        output.configuration.chunkDataSizeLimit = 5
+
+        // Disable to send according to log count
+        output.configuration.logEntryCountLimit = .max
+
+        // A log entry that has data larger than limit will be discarded.
+        var log1 = makeLog()
+        log1.userData = "0123456789".data(using: .utf8)
+        output.emit(log: log1)
+        XCTAssertEqual(output.calledWriteCount, 0)
+        XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 0)
+    }
+
     func testRetryWhenFailed() {
         output.shouldSuccess = false
         output.configuration.logEntryCountLimit = 10
