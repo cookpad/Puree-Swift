@@ -23,8 +23,9 @@ jobs:
       run: |
         gem install cocoapods
         pod repo update
-        brew install swiftlint
     - name: SwiftLint
-      run: swiftlint --strict
+      uses: norio-nomura/action-swiftlint@3.2.1
+      with:
+        args: --strict
     - name: CocoaPods
       run: pod lib lint --allow-warnings
