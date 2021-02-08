@@ -15,7 +15,15 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run Tests with Swift Package Manager
       run: swift test -Xswiftc "-target" -Xswiftc "x86_64-apple-macosx10.12"
-  Lint:
+  SwiftLint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: SwiftLint
+      uses: norio-nomura/action-swiftlint@3.2.1
+      with:
+        args: --strict
+  CocoaPodsLint:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
@@ -23,9 +31,5 @@ jobs:
       run: |
         gem install cocoapods
         pod repo update
-    - name: SwiftLint
-      uses: norio-nomura/action-swiftlint@3.2.1
-      with:
-        args: --strict
     - name: CocoaPods
       run: pod lib lint --allow-warnings
