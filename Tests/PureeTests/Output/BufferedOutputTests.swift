@@ -107,6 +107,58 @@ class BufferedOutputTests: XCTestCase {
         XCTAssertEqual(logStore.logs(for: "pv").count, 0)
     }
 
+    func testHittingLogSizeLimit() {
+        // Set maximum chunk size as 15bytes
+        output.configuration.chunkDataSizeLimit = 15
+
+        // Disable to send according to log count
+        output.configuration.logEntryCountLimit = .max
+
+        XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 0)
+        XCTAssertEqual(output.calledWriteCount, 0)
+
+        // Emit one log entry whose size is 10bytes.
+        // This should not be sent at this time because size limit has not exceeded yet.
+        var log1 = makeLog()
+        log1.userData = "0123456789".data(using: .utf8)
+        output.emit(log: log1)
+        XCTAssertEqual(output.calledWriteCount, 0)
+        XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 1)
+
+        // Emit one more log entry whose size is 10bytes.
+        // Now `log1` should be sent and `log2` shoud not because reaching to size limit. `log2` should remain in the `logStore` .
+        var log2 = makeLog()
+        log2.userData = "0123456789".data(using: .utf8)
+        output.emit(log: log2)
+        output.waitUntilCurrentQueuedJobFinished()
+        XCTAssertEqual(output.calledWriteCount, 1)
+        XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 1)
+
+        // Emit one more log entry whose size is 3bytes.
+        // Now `log2` and `log3` should not be sent yet because total size has not reached the limit.
+        var log3 = makeLog()
+        log3.userData = "012".data(using: .utf8)
+        output.emit(log: log3)
+        output.waitUntilCurrentQueuedJobFinished()
+        XCTAssertEqual(output.calledWriteCount, 1)
+        XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 2)
+    }
+
+    func testEmittingOneLogLargerThanSizeLimit() {
+        // Set maximum chunk size as 5bytes
+        output.configuration.chunkDataSizeLimit = 5
+
+        // Disable to send according to log count
+        output.configuration.logEntryCountLimit = .max
+
+        // A log entry that has data larger than limit will be discarded.
+        var log1 = makeLog()
+        log1.userData = "0123456789".data(using: .utf8)
+        output.emit(log: log1)
+        XCTAssertEqual(output.calledWriteCount, 0)
+        XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 0)
+    }
+
     func testRetryWhenFailed() {
         output.shouldSuccess = false
         output.configuration.logEntryCountLimit = 10

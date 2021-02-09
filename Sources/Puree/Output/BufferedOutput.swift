@@ -33,8 +33,9 @@ open class BufferedOutput: InstantiatableOutput {
         public var logEntryCountLimit: Int
         public var flushInterval: TimeInterval
         public var retryLimit: Int
+        public var chunkDataSizeLimit: Int?
 
-        public static let `default` = Configuration(logEntryCountLimit: 5, flushInterval: 10, retryLimit: 3)
+        public static let `default` = Configuration(logEntryCountLimit: 5, flushInterval: 10, retryLimit: 3, chunkDataSizeLimit: nil)
     }
 
     public let tagPattern: TagPattern
@@ -54,6 +55,10 @@ open class BufferedOutput: InstantiatableOutput {
 
     private var retryLimit: Int {
         return configuration.retryLimit
+    }
+
+    private var sizeLimit: Int? {
+        return configuration.chunkDataSizeLimit
     }
 
     private var currentDate: Date {
@@ -86,11 +91,24 @@ open class BufferedOutput: InstantiatableOutput {
 
     public func emit(log: LogEntry) {
         readWriteQueue.sync {
+            if let logSizeLimit = configuration.chunkDataSizeLimit, (log.userData?.count ?? 0) > logSizeLimit {
+                // Data whose size is larger than limit will never be sent.
+                return
+            }
+
             buffer.insert(log)
             logStore.add(log, for: storageGroup, completion: nil)
 
             if buffer.count >= logLimit {
                 flush()
+            } else if let logSizeLimit = configuration.chunkDataSizeLimit {
+                let currentBufferedLogSize = buffer.reduce(0, { (size, log) -> Int in
+                    size + (log.userData?.count ?? 0)
+                })
+
+                if currentBufferedLogSize >= logSizeLimit {
+                    flush()
+                }
             }
         }
     }
@@ -160,8 +178,25 @@ open class BufferedOutput: InstantiatableOutput {
         let newBuffer = Set(buffer.dropFirst(logCount))
         let dropped = buffer.subtracting(newBuffer)
         buffer = newBuffer
-        let chunk = Chunk(logs: dropped)
-        callWriteChunk(chunk)
+        let logsToSend: Set<LogEntry>
+        if let chunkDataSizeLimit = configuration.chunkDataSizeLimit {
+            var logsUnderSizeLimit = Set<LogEntry>()
+
+            var currentTotalLogSize = 0
+            for log in dropped {
+                if currentTotalLogSize + (log.userData?.count ?? 0) < chunkDataSizeLimit {
+                    logsUnderSizeLimit.insert(log)
+                    currentTotalLogSize += log.userData?.count ?? 0
+                } else {
+                    buffer = dropped.subtracting(logsUnderSizeLimit)
+                    break
+                }
+            }
+            logsToSend = logsUnderSizeLimit
+        } else {
+            logsToSend = dropped
+        }
+        callWriteChunk(Chunk(logs: logsToSend))
     }
 
     open func delay(try count: Int) -> TimeInterval {
