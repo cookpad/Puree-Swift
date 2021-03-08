@@ -213,3 +213,7 @@ By default, Puree stores them in local files in the `Library/Caches` directory.
 You can also define your own custom log store backed by any storage (e.g. Core Data, Realm, YapDatabase, etc.).
 
 See the `LogStore` protocol for more details.
+
+## License 
+
+Please do read the [License](https://github.com/cookpad/Puree-Swift/blob/master/LICENSE) before contributing.
