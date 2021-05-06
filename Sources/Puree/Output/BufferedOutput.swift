@@ -36,6 +36,13 @@ open class BufferedOutput: InstantiatableOutput {
         public var chunkDataSizeLimit: Int?
 
         public static let `default` = Configuration(logEntryCountLimit: 5, flushInterval: 10, retryLimit: 3, chunkDataSizeLimit: nil)
+
+        public init(logEntryCountLimit: Int, flushInterval: TimeInterval, retryLimit: Int, chunkDataSizeLimit: Int? = nil) {
+            self.logEntryCountLimit = logEntryCountLimit
+            self.flushInterval = flushInterval
+            self.retryLimit = retryLimit
+            self.chunkDataSizeLimit = chunkDataSizeLimit
+        }
     }
 
     public let tagPattern: TagPattern
