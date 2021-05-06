@@ -36,6 +36,13 @@ open class BufferedOutput: InstantiatableOutput {
         public var chunkDataSizeLimit: Int?
 
         public static let `default` = Configuration(logEntryCountLimit: 5, flushInterval: 10, retryLimit: 3, chunkDataSizeLimit: nil)
+
+        public init(logEntryCountLimit: Int, flushInterval: TimeInterval, retryLimit: Int, chunkDataSizeLimit: Int? = nil) {
+            self.logEntryCountLimit = logEntryCountLimit
+            self.flushInterval = flushInterval
+            self.retryLimit = retryLimit
+            self.chunkDataSizeLimit = chunkDataSizeLimit
+        }
     }
 
     public let tagPattern: TagPattern
@@ -91,7 +98,7 @@ open class BufferedOutput: InstantiatableOutput {
 
     public func emit(log: LogEntry) {
         readWriteQueue.sync {
-            if let logSizeLimit = configuration.chunkDataSizeLimit, (log.userData?.count ?? 0) > logSizeLimit {
+            if let logSizeLimit = sizeLimit, (log.userData?.count ?? 0) > logSizeLimit {
                 // Data whose size is larger than limit will never be sent.
                 return
             }
@@ -101,7 +108,7 @@ open class BufferedOutput: InstantiatableOutput {
 
             if buffer.count >= logLimit {
                 flush()
-            } else if let logSizeLimit = configuration.chunkDataSizeLimit {
+            } else if let logSizeLimit = sizeLimit {
                 let currentBufferedLogSize = buffer.reduce(0, { (size, log) -> Int in
                     size + (log.userData?.count ?? 0)
                 })
@@ -179,7 +186,7 @@ open class BufferedOutput: InstantiatableOutput {
         let dropped = buffer.subtracting(newBuffer)
         buffer = newBuffer
         let logsToSend: Set<LogEntry>
-        if let chunkDataSizeLimit = configuration.chunkDataSizeLimit {
+        if let chunkDataSizeLimit = sizeLimit {
             var logsUnderSizeLimit = Set<LogEntry>()
 
             var currentTotalLogSize = 0
