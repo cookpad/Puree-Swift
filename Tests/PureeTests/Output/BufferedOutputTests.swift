@@ -63,6 +63,20 @@ class BufferedOutputTests: XCTestCase {
         XCTAssertEqual(output.calledWriteCount, 1)
     }
 
+    func testBufferedOutputSendBufferedLogs() {
+        output.configuration.logEntryCountLimit = 10
+
+        XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 0)
+        XCTAssertEqual(output.calledWriteCount, 0)
+
+        output.emit(log: makeLog())
+        output.sendBufferedLogs()
+        output.waitUntilCurrentQueuedJobFinished()
+
+        XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 0)
+        XCTAssertEqual(output.calledWriteCount, 1)
+    }
+
     func testBufferedOutputFlushedByInterval() {
         output.configuration.logEntryCountLimit = 10
         output.configuration.flushInterval = 1
@@ -285,6 +299,28 @@ class BufferedOutputAsyncTests: XCTestCase {
         XCTAssertEqual(output.calledWriteCount, 0)
 
         output.resume()
+        output.waitUntilCurrentQueuedJobFinished()
+
+        XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 0)
+        XCTAssertEqual(output.calledWriteCount, 1)
+    }
+
+    func testBufferedOutputSendBufferedLogs() {
+        output.configuration.logEntryCountLimit = 10
+
+        let expectation = self.expectation(description: "async writing")
+        output.writeCallback = {
+            expectation.fulfill()
+        }
+        output.waitUntilCurrentCompletionBlock = { [weak self] in
+            self?.wait(for: [expectation], timeout: 1.0)
+        }
+
+        XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 0)
+        XCTAssertEqual(output.calledWriteCount, 0)
+
+        output.emit(log: makeLog())
+        output.sendBufferedLogs()
         output.waitUntilCurrentQueuedJobFinished()
 
         XCTAssertEqual(logStore.logs(for: "pv_TestingBufferedOutput").count, 0)
