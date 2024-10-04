@@ -101,7 +101,7 @@ class BufferedOutputTests: XCTestCase {
         XCTAssertEqual(output.calledWriteCount, 0)
 
         output.writeCallback = {
-            XCTFail("flush should not be called")
+            XCTFail("writeBufferedLogs should not be called")
         }
         sleep(2)
     }
@@ -351,7 +351,7 @@ class BufferedOutputAsyncTests: XCTestCase {
         XCTAssertEqual(output.calledWriteCount, 0)
 
         output.writeCallback = {
-            XCTFail("flush should not be called")
+            XCTFail("writeBufferedLogs should not be called")
         }
         sleep(2)
     }
