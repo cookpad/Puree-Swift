@@ -79,6 +79,12 @@ public final class Logger {
         }
     }
 
+    public func sendBufferedLogs() {
+        dispatchQueue.sync {
+            outputs.forEach { ($0 as? BufferedOutput)?.sendBufferedLogs() }
+        }
+    }
+
     public func suspend() {
         dispatchQueue.sync {
             outputs.forEach { $0.suspend() }

@@ -71,17 +71,13 @@ open class BufferedOutput: InstantiatableOutput {
 
     public func start() {
         reloadLogStore()
-        readWriteQueue.sync {
-            flush()
-        }
+        sendBufferedLogs()
         setUpTimer()
     }
 
     public func resume() {
         reloadLogStore()
-        readWriteQueue.sync {
-            flush()
-        }
+        sendBufferedLogs()
         setUpTimer()
     }
 
@@ -100,16 +96,22 @@ open class BufferedOutput: InstantiatableOutput {
             logStore.add(log, for: storageGroup, completion: nil)
 
             if buffer.count >= logLimit {
-                flush()
+                writeBufferedLogs()
             } else if let logSizeLimit = configuration.chunkDataSizeLimit {
                 let currentBufferedLogSize = buffer.reduce(0, { (size, log) -> Int in
                     size + (log.userData?.count ?? 0)
                 })
 
                 if currentBufferedLogSize >= logSizeLimit {
-                    flush()
+                    writeBufferedLogs()
                 }
             }
+        }
+    }
+
+    public func sendBufferedLogs() {
+        readWriteQueue.sync {
+            writeBufferedLogs()
         }
     }
 
@@ -138,12 +140,12 @@ open class BufferedOutput: InstantiatableOutput {
         if let lastFlushDate = lastFlushDate {
             if currentDate.timeIntervalSince(lastFlushDate) > flushInterval {
                 readWriteQueue.async {
-                    self.flush()
+                    self.writeBufferedLogs()
                 }
             }
         } else {
             readWriteQueue.async {
-                self.flush()
+                self.writeBufferedLogs()
             }
         }
     }
@@ -165,7 +167,7 @@ open class BufferedOutput: InstantiatableOutput {
         }
     }
 
-    private func flush() {
+    private func writeBufferedLogs() {
         dispatchPrecondition(condition: .onQueue(readWriteQueue))
 
         lastFlushDate = currentDate
