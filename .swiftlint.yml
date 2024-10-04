@@ -4,5 +4,6 @@ included:
 disabled_rules:
   - line_length
   - file_length
+  - non_optional_string_data_conversion
 trailing_comma:
   mandatory_comma: true
